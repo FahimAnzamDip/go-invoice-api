@@ -138,8 +138,8 @@ func (invoice *Invoice) Store() map[string]interface{} {
 
 	payment := &Payment{
 		InvoiceID:     invoice.ID,
-		ReceivedOn:    func() *time.Time { currentTime := time.Now(); return &currentTime }(),
-		Amount:        invoice.PaidAmount,
+		ReceivedOn:    func() string { currentTime := time.Now().Format("2006-01-02"); return currentTime }(),
+		Amount:        invoice.PaidAmount / 100,
 		PaymentMethod: invoice.PaymentMethod,
 		Note:          invoice.Note,
 	}

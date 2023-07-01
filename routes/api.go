@@ -102,6 +102,10 @@ func Configure() *chi.Mux {
 		ar.Get("/invoices/{id}", controllers.ShowInvoiceHandler)
 		ar.Put("/invoices/{id}", controllers.UpdateInvoiceHandler)
 		ar.Delete("/invoices/{id}", controllers.DestroyInvoiceHandler)
+
+		// Payments routes
+		ar.Get("/payments", controllers.IndexPaymentHandler)
+		ar.Post("/payments", controllers.StorePaymentHandler)
 	})
 
 	// Mount to main router
