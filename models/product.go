@@ -14,7 +14,7 @@ type Product struct {
 	Description string    `json:"description"`
 	Price       float32   `gorm:"type:integer;not null;" json:"price"`
 	Stock       int       `gorm:"not null;default:0" json:"stock"`
-	CategoryID  uint      `json:"category_id"`
+	CategoryID  *uint     `json:"category_id"`
 	Category    *Category `gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"category"`
 	ImagePath   string    `json:"image_url"`
 	Tags        []*Tag    `gorm:"many2many:product_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"tags"`
@@ -45,14 +45,8 @@ func (product *Product) validate() (map[string]interface{}, bool) {
 	if product.Name == "" {
 		return u.Message(false, "Product name is required"), false
 	}
-	if product.Price == 0 {
+	if product.Price <= 0 {
 		return u.Message(false, "Product price is required"), false
-	}
-	if product.Stock == 0 {
-		return u.Message(false, "Product stock is required"), false
-	}
-	if product.CategoryID <= 0 {
-		return u.Message(false, "Category ID is required"), false
 	}
 	// All the required parameters are present
 	return u.Message(true, "success"), true

@@ -31,11 +31,11 @@ func init() {
 			return
 		}
 		// Seed Databasee
-		// err = seed()
-		// if err != nil {
-		// 	log.Println("Database seeding failed! Please check configuration.")
-		//	return
-		// }
+		err = seed()
+		if err != nil {
+			log.Println("Database seeding failed! Please check configuration.")
+			return
+		}
 	}
 }
 
@@ -46,9 +46,11 @@ func connect() {
 	dbPort := os.Getenv("db_port")
 	dbName := os.Getenv("db_name")
 
-	log.Println(dbUser + ":" + dbPass + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local")
+	// dsn := "host=" + dbHost + " " + "user=" + dbUser + " " + "password=" + dbPass + " " + "dbname=" + dbName + " " + "port=" + dbPort + " sslmode=disable TimeZone=Asia/Dhaka"
 
 	dsn := dbUser + ":" + dbPass + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
+
+	log.Println(dsn)
 
 	d, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

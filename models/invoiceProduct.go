@@ -11,7 +11,7 @@ type InvoiceProduct struct {
 	Product     *Product `gorm:"foreignKey:ProductID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"-"`
 	Quantity    int      `gorm:"not null;" json:"quantity"`
 	UnitPrice   float32  `gorm:"not null;type:integer;" json:"unit_price"`
-	TaxID       uint     `json:"tax_id"`
+	TaxID       *uint     `gorm:"" json:"tax_id"`
 	Tax         *Tax     `gorm:"foreignKey:TaxID;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;" json:"tax,omitempty"`
 	SubTotal    float32  `gorm:"not null;type:integer;" json:"sub_total"`
 }
