@@ -20,11 +20,11 @@ type Invoice struct {
 	Recurring       bool              `gorm:"not null;default:0;" json:"recurring"`
 	RecurringCycle  string            `gorm:"" json:"recurring_cycle"`
 	DiscountType    string            `gorm:"" json:"discount_type"`
-	DiscountAmount  int               `gorm:"not null;default:0;" json:"discount_amount"`
-	TotalAmount     int               `gorm:"not null;default:0;" json:"total_amount"`
-	PaidAmount      int               `gorm:"not null;default:0;" json:"paid_amount"`
-	DueAmount       int               `gorm:"not null;default:0;" json:"due_amount"`
-	TaxAmount       int               `gorm:"not null;default:0;" json:"tax_amount"`
+	DiscountAmount  float32           `gorm:"type:integer;not null;default:0;" json:"discount_amount"`
+	TotalAmount     float32           `gorm:"type:integer;not null;default:0;" json:"total_amount"`
+	PaidAmount      float32           `gorm:"type:integer;not null;default:0;" json:"paid_amount"`
+	DueAmount       float32           `gorm:"type:integer;not null;default:0;" json:"due_amount"`
+	TaxAmount       float32           `gorm:"type:integer;not null;default:0;" json:"tax_amount"`
 	Terms           string            `gorm:"type:text;" json:"terms"`
 	InvoiceProducts []*InvoiceProduct `gorm:"foreignKey:InvoiceID;" json:"invoice_products,omitempty"`
 	PaymentMethod   string            `gorm:"-" json:"payment_method,omitempty"`
@@ -130,7 +130,7 @@ func (invoice *Invoice) Store() map[string]interface{} {
 		invoiceProduct.ProductName = productName
 		invoiceProduct.InvoiceID = invoice.ID
 
-		err = db.Create(&invoiceProduct).Error
+		err := db.Create(&invoiceProduct).Error
 		if err != nil {
 			return u.Message(false, err.Error())
 		}
@@ -169,6 +169,41 @@ func (invoice *Invoice) Show(id uint) map[string]interface{} {
 
 	res := u.Message(true, "")
 	res["data"] = invoice
+
+	return res
+}
+
+// Update function updates specific entry by ID
+func (invoice *Invoice) Update(id uint) map[string]interface{} {
+	_, err := invoice.exists(id)
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	err = db.Where("id = ?", id).Omit("InvoiceProducts").Updates(&invoice).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	inv, _ := invoice.exists(id)
+
+	db.Unscoped().Model(&inv).Association("InvoiceProducts").Unscoped().Clear()
+
+	for _, invoiceProduct := range invoice.InvoiceProducts {
+		var productName string
+		db.Model(&Product{}).Where("id = ?", invoiceProduct.ProductID).
+			Select("name").Scan(&productName)
+		invoiceProduct.ProductName = productName
+		invoiceProduct.InvoiceID = inv.ID
+
+		err := db.Create(&invoiceProduct).Error
+		if err != nil {
+			return u.Message(false, err.Error())
+		}
+	}
+
+	res := u.Message(true, "Invoice Updated Successfully")
+	res["data"] = inv
 
 	return res
 }

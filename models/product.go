@@ -9,10 +9,10 @@ import (
 
 type Product struct {
 	gorm.Model
-	Name        string    `gorm:"not null" json:"name"`
+	Name        string    `gorm:"not null;" json:"name"`
 	Code        string    `gorm:"" json:"code"`
 	Description string    `json:"description"`
-	Price       int       `gorm:"not null" json:"price"`
+	Price       float32   `gorm:"type:integer;not null;" json:"price"`
 	Stock       int       `gorm:"not null;default:0" json:"stock"`
 	CategoryID  uint      `json:"category_id"`
 	Category    *Category `gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"category"`
@@ -126,7 +126,7 @@ func (product *Product) Update(id uint) map[string]interface{} {
 
 	prod, _ := product.exists(id)
 
-	db.Model(&prod).Association("Tags").Clear()
+	db.Unscoped().Model(&prod).Association("Tags").Unscoped().Clear()
 
 	for _, tagID := range product.TagIDs {
 		tag := &Tag{}

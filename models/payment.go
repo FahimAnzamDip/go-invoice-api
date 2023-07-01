@@ -14,7 +14,7 @@ type Payment struct {
 	InvoiceID     uint       `gorm:"not null" json:"invoice_id"`
 	Invoice       *Invoice   `gorm:"foreignKey:InvoiceID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 	ReceivedOn    *time.Time `gorm:"not null;type:date;" json:"received_on"`
-	Amount        int        `gorm:"not null;default:0;" json:"amount"`
+	Amount        float32    `gorm:"type:integer;not null;default:0;" json:"amount"`
 	PaymentMethod string     `gorm:"not null;" json:"payment_method"`
 	Note          string     `gorm:"type:text;" json:"note"`
 }

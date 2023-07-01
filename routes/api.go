@@ -89,10 +89,18 @@ func Configure() *chi.Mux {
 		ar.Put("/clients/{id}", controllers.UpdateClientHandler)
 		ar.Delete("/clients/{id}", controllers.DestroyClientHandler)
 
-		// Clients routes
+		// Taxes routes
+		ar.Get("/taxes", controllers.IndexTaxHandler)
+		ar.Post("/taxes", controllers.StoreTaxHandler)
+		ar.Get("/taxes/{id}", controllers.ShowTaxHandler)
+		ar.Put("/taxes/{id}", controllers.UpdateTaxHandler)
+		ar.Delete("/taxes/{id}", controllers.DestroyTaxHandler)
+
+		// Invoices routes
 		ar.Get("/invoices", controllers.IndexInvoiceHandler)
 		ar.Post("/invoices", controllers.StoreInvoiceHandler)
 		ar.Get("/invoices/{id}", controllers.ShowInvoiceHandler)
+		ar.Put("/invoices/{id}", controllers.UpdateInvoiceHandler)
 		ar.Delete("/invoices/{id}", controllers.DestroyInvoiceHandler)
 	})
 
