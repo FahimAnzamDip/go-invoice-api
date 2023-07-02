@@ -18,7 +18,7 @@
     -Generate and Autosend the recurred invoice to the client (Monthly/Quarterly/Semi-Annually/Annually)
 
 - Product Management
-    -You are able to add products/Services according to their category.
+    - You are able to add products/Services according to their category.
 
 - Reports
     - See different reports to learn about your client and their payment status at a glance
