@@ -11,15 +11,19 @@ import (
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
 )
 
-func UploadHandler(w http.ResponseWriter, r *http.Request) {
+var uploadDir string = "./public/uploads"
+
+func UploadFileHandler(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseMultipartForm(32 << 20) // Max file size 32MB
 	if err != nil {
 		u.Respond(w, u.Message(false, "Failed to parse multipart form"))
+		return
 	}
 
-	file, handler, err := r.FormFile("image")
+	file, handler, err := r.FormFile("file")
 	if err != nil {
-		u.Respond(w, u.Message(false, "Failed to retrieve image file"))
+		u.Respond(w, u.Message(false, "Failed to retrieve file"))
+		return
 	}
 
 	defer file.Close()
@@ -31,14 +35,32 @@ func UploadHandler(w http.ResponseWriter, r *http.Request) {
 	path, err := saveFile(file, filename)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Failed to save image file"))
+		return
 	}
 
 	u.Respond(w, map[string]interface{}{"status": true, "image_url": path})
 }
 
-func saveFile(file io.Reader, filename string) (string, error) {
-	uploadDir := "./public/uploads"
+func DeleteFileHandler(w http.ResponseWriter, r *http.Request) {
+	fileName := r.FormValue("file_name")
 
+	if fileName == "" {
+		u.Respond(w, u.Message(false, "File name is missing"))
+		return
+	}
+
+	filePath := uploadDir + "/" + fileName
+
+	err := os.Remove(filePath)
+	if err != nil {
+		u.Respond(w, u.Message(false, "Failed to delete file"))
+		return
+	}
+
+	u.Respond(w, map[string]interface{}{"status": true, "file_name": fileName})
+}
+
+func saveFile(file io.Reader, filename string) (string, error) {
 	err := os.MkdirAll(uploadDir, os.ModePerm)
 	if err != nil {
 		return "", fmt.Errorf("failed to create upload directory: %s", err.Error())
@@ -61,5 +83,5 @@ func saveFile(file io.Reader, filename string) (string, error) {
 
 func generateUniqueFilename(originalFilename string) string {
 	// Timestmap based filename
-	return fmt.Sprintf("%d_%s", time.Now().UnixNano(), originalFilename)
+	return fmt.Sprintf("%d", time.Now().UnixNano())
 }

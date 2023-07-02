@@ -178,8 +178,13 @@ func (client *Client) Update(id uint) map[string]interface{} {
 		return u.Message(false, err.Error())
 	}
 
+	upClnt, err := client.exists(id)
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
 	res := u.Message(true, "Client Updated Successfully")
-	res["data"] = clnt
+	res["data"] = upClnt
 
 	return res
 }

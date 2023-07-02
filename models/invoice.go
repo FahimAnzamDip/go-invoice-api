@@ -59,7 +59,7 @@ func (invoice *Invoice) validate() (map[string]interface{}, bool) {
 	if invoice.IssueDate == "" {
 		return u.Message(false, "Issue date is required"), false
 	}
-	if invoice.PaidAmount <= 0 {
+	if invoice.PaidAmount < 0 {
 		return u.Message(false, "Received amount is required"), false
 	}
 	// All the required parameters are present
@@ -133,7 +133,7 @@ func (invoice *Invoice) Store() map[string]interface{} {
 
 // Show function returns specific entry by ID
 func (invoice *Invoice) Show(id uint) map[string]interface{} {
-	err := db.Preload("Client.User").Preload("InvoiceProducts").
+	err := db.Preload("Client.User").Preload("InvoiceProducts.Tax").
 		Preload("Payments").Where("id = ?", id).First(&invoice).Error
 	if err != nil {
 		return u.Message(false, err.Error())

@@ -37,7 +37,8 @@ func Configure() *chi.Mux {
 
 	// Public routes
 	ar.Group(func(ar chi.Router) {
-		ar.Post("/auth/register", handlers.StoreUserHandler)
+		// If registration is needed uncomment below route
+		// ar.Post("/auth/register", handlers.StoreUserHandler)
 		ar.Post("/auth/login", handlers.LoginHandler)
 	})
 
@@ -45,10 +46,10 @@ func Configure() *chi.Mux {
 	ar.Group(func(ar chi.Router) {
 		ar.Use(middlewares.AuthMiddleware)
 		// User routes
-		ar.Post("/auth/password", handlers.UpdatePasswordHandler)
-		ar.Put("/auth/{id}/update", handlers.UpdateUserHandler)
 		ar.Get("/auth/validate", handlers.ValidateUserHandler)
 		ar.Get("/auth/user", handlers.GetUserByIdHandler)
+		ar.Put("/auth/password", handlers.UpdatePasswordHandler)
+		ar.Put("/auth/{id}/update", handlers.UpdateUserHandler)
 	})
 
 	// Admin routes
@@ -66,8 +67,15 @@ func Configure() *chi.Mux {
 		ar.Put("/categories/{id}", handlers.UpdateCategoryHandler)
 		ar.Delete("/categories/{id}", handlers.DestroyCategoryHandler)
 
+		// Tags routes
+		ar.Get("/tags", handlers.IndexTagHandler)
+		ar.Post("/tags", handlers.StoreTagHandler)
+		ar.Put("/tags/{id}", handlers.UpdateTagHandler)
+		ar.Delete("/tags/{id}", handlers.DestroyTagHandler)
+
 		// Uploads routes
-		ar.Post("/uploads", handlers.UploadHandler)
+		ar.Post("/uploads", handlers.UploadFileHandler)
+		ar.Delete("/uploads", handlers.DeleteFileHandler)
 
 		// Products routes
 		ar.Get("/products", handlers.IndexProductHandler)
@@ -75,12 +83,6 @@ func Configure() *chi.Mux {
 		ar.Get("/products/{id}", handlers.ShowProductHandler)
 		ar.Put("/products/{id}", handlers.UpdateProductHandler)
 		ar.Delete("/products/{id}", handlers.DestroyProductHandler)
-
-		// Tags routes
-		ar.Get("/tags", handlers.IndexTagHandler)
-		ar.Post("/tags", handlers.StoreTagHandler)
-		ar.Put("/tags/{id}", handlers.UpdateTagHandler)
-		ar.Delete("/tags/{id}", handlers.DestroyTagHandler)
 
 		// Clients routes
 		ar.Get("/clients", handlers.IndexClientHandler)
