@@ -30,20 +30,6 @@ func StorePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, res)
 }
 
-func ShowPaymentHandler(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	ID, err := strconv.ParseInt(id, 10, 64)
-	if err != nil {
-		u.Respond(w, u.Message(false, "Error while parsing ID"))
-		return
-	}
-
-	payment := &models.Payment{}
-
-	data := payment.Show(uint(ID))
-	u.Respond(w, data)
-}
-
 func UpdatePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)

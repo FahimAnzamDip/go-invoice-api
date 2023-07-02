@@ -10,27 +10,27 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func IndexCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	category := &models.Category{}
+func IndexPurposeHandler(w http.ResponseWriter, r *http.Request) {
+	purpose := &models.Purpose{}
 
-	data := category.Index()
+	data := purpose.Index()
 	u.Respond(w, data)
 }
 
-func StoreCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	category := &models.Category{}
+func StorePurposeHandler(w http.ResponseWriter, r *http.Request) {
+	purpose := &models.Purpose{}
 
-	err := json.NewDecoder(r.Body).Decode(category)
+	err := json.NewDecoder(r.Body).Decode(purpose)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Error while decoding request body"))
 		return
 	}
 
-	res := category.Store()
+	res := purpose.Store()
 	u.Respond(w, res)
 }
 
-func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
+func UpdatePurposeHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -38,18 +38,18 @@ func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category := &models.Category{}
-	err = json.NewDecoder(r.Body).Decode(category)
+	purpose := &models.Purpose{}
+	err = json.NewDecoder(r.Body).Decode(purpose)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid Request"))
 		return
 	}
 
-	res := category.Update(uint(ID))
+	res := purpose.Update(uint(ID))
 	u.Respond(w, res)
 }
 
-func DestroyCategoryHandler(w http.ResponseWriter, r *http.Request) {
+func DestroyPurposeHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -57,8 +57,8 @@ func DestroyCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category := &models.Category{}
+	purpose := &models.Purpose{}
 
-	res := category.Destroy(uint(ID))
+	res := purpose.Destroy(uint(ID))
 	u.Respond(w, res)
 }

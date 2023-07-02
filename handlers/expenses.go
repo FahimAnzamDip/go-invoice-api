@@ -10,27 +10,27 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func IndexCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	category := &models.Category{}
+func IndexExpenseHandler(w http.ResponseWriter, r *http.Request) {
+	expense := &models.Expense{}
 
-	data := category.Index()
+	data := expense.Index()
 	u.Respond(w, data)
 }
 
-func StoreCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	category := &models.Category{}
+func StoreExpenseHandler(w http.ResponseWriter, r *http.Request) {
+	expense := &models.Expense{}
 
-	err := json.NewDecoder(r.Body).Decode(category)
+	err := json.NewDecoder(r.Body).Decode(expense)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Error while decoding request body"))
 		return
 	}
 
-	res := category.Store()
+	res := expense.Store()
 	u.Respond(w, res)
 }
 
-func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
+func UpdateExpenseHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -38,18 +38,18 @@ func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category := &models.Category{}
-	err = json.NewDecoder(r.Body).Decode(category)
+	expense := &models.Expense{}
+	err = json.NewDecoder(r.Body).Decode(expense)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid Request"))
 		return
 	}
 
-	res := category.Update(uint(ID))
+	res := expense.Update(uint(ID))
 	u.Respond(w, res)
 }
 
-func DestroyCategoryHandler(w http.ResponseWriter, r *http.Request) {
+func DestroyExpenseHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -57,8 +57,8 @@ func DestroyCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category := &models.Category{}
+	expense := &models.Expense{}
 
-	res := category.Destroy(uint(ID))
+	res := expense.Destroy(uint(ID))
 	u.Respond(w, res)
 }

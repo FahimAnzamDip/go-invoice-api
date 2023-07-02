@@ -20,11 +20,11 @@ type Invoice struct {
 	Recurring       bool              `gorm:"not null;default:0;" json:"recurring"`
 	RecurringCycle  string            `gorm:"" json:"recurring_cycle"`
 	DiscountType    string            `gorm:"" json:"discount_type"`
-	DiscountAmount  float32           `gorm:"type:integer;not null;default:0;" json:"discount_amount"`
-	TotalAmount     float32           `gorm:"type:integer;not null;default:0;" json:"total_amount"`
-	PaidAmount      float32           `gorm:"type:integer;not null;default:0;" json:"paid_amount"`
-	DueAmount       float32           `gorm:"type:integer;not null;default:0;" json:"due_amount"`
-	TaxAmount       float32           `gorm:"type:integer;not null;default:0;" json:"tax_amount"`
+	DiscountAmount  float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"discount_amount"`
+	TotalAmount     float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"total_amount"`
+	PaidAmount      float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"paid_amount"`
+	DueAmount       float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"due_amount"`
+	TaxAmount       float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"tax_amount"`
 	Terms           string            `gorm:"type:text;" json:"terms"`
 	InvoiceProducts []*InvoiceProduct `gorm:"foreignKey:InvoiceID;" json:"invoice_products,omitempty"`
 	PaymentMethod   string            `gorm:"-" json:"payment_method,omitempty"`
@@ -44,31 +44,6 @@ func (invoice *Invoice) BeforeCreate(tx *gorm.DB) error {
 		reference = fmt.Sprintf("#INV-%05d", *maxID+1)
 	}
 	tx.Statement.SetColumn("reference", reference)
-	tx.Statement.SetColumn("discount_amount", invoice.DiscountAmount*100)
-	tx.Statement.SetColumn("total_amount", invoice.TotalAmount*100)
-	tx.Statement.SetColumn("paid_amount", invoice.PaidAmount*100)
-	tx.Statement.SetColumn("due_amount", invoice.DueAmount*100)
-	tx.Statement.SetColumn("tax_amount", invoice.TaxAmount*100)
-	return nil
-}
-
-// BeforeUpdate is called implicitly just before updating an entry
-func (invoice *Invoice) BeforeUpdate(tx *gorm.DB) error {
-	tx.Statement.SetColumn("discount_amount", invoice.DiscountAmount*100)
-	tx.Statement.SetColumn("total_amount", invoice.TotalAmount*100)
-	tx.Statement.SetColumn("paid_amount", invoice.PaidAmount*100)
-	tx.Statement.SetColumn("due_amount", invoice.DueAmount*100)
-	tx.Statement.SetColumn("tax_amount", invoice.TaxAmount*100)
-	return nil
-}
-
-// AfterFind is called implicitly just after finding an entry
-func (invoice *Invoice) AfterFind(tx *gorm.DB) error {
-	tx.Statement.SetColumn("discount_amount", invoice.DiscountAmount/100)
-	tx.Statement.SetColumn("total_amount", invoice.TotalAmount/100)
-	tx.Statement.SetColumn("paid_amount", invoice.PaidAmount/100)
-	tx.Statement.SetColumn("due_amount", invoice.DueAmount/100)
-	tx.Statement.SetColumn("tax_amount", invoice.TaxAmount/100)
 	return nil
 }
 
@@ -140,7 +115,7 @@ func (invoice *Invoice) Store() map[string]interface{} {
 	payment := &Payment{
 		InvoiceID:     invoice.ID,
 		ReceivedOn:    func() string { currentTime := time.Now().Format("2006-01-02"); return currentTime }(),
-		Amount:        invoice.PaidAmount / 100,
+		Amount:        invoice.PaidAmount,
 		PaymentMethod: invoice.PaymentMethod,
 		Note:          invoice.Note,
 	}

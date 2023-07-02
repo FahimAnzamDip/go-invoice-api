@@ -43,6 +43,8 @@ func migrate() error {
 		&Tax{},
 		&InvoiceProduct{},
 		&Payment{},
+		&Purpose{},
+		&Expense{},
 	)
 
 	return err

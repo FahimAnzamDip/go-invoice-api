@@ -12,31 +12,12 @@ type Product struct {
 	Name        string    `gorm:"not null;" json:"name"`
 	Code        string    `gorm:"" json:"code"`
 	Description string    `json:"description"`
-	Price       float32   `gorm:"type:integer;not null;" json:"price"`
-	Stock       int       `gorm:"not null;default:0" json:"stock"`
+	Price       float32   `gorm:"type:numeric(7,2);not null;" json:"price"`
 	CategoryID  *uint     `json:"category_id"`
 	Category    *Category `gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"category"`
 	ImagePath   string    `json:"image_url"`
 	Tags        []*Tag    `gorm:"many2many:product_tags;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"tags"`
 	TagIDs      []uint    `gorm:"-" json:"tag_ids,omitempty"`
-}
-
-// BeforeCreate is called implicitly just before creating an entry
-func (product *Product) BeforeCreate(tx *gorm.DB) error {
-	tx.Statement.SetColumn("price", product.Price*100)
-	return nil
-}
-
-// BeforeUpdate is called implicitly just before updating an entry
-func (product *Product) BeforeUpdate(tx *gorm.DB) error {
-	tx.Statement.SetColumn("price", product.Price*100)
-	return nil
-}
-
-// AfterFind is called implicitly just after finding an entry
-func (product *Product) AfterFind(tx *gorm.DB) error {
-	tx.Statement.SetColumn("price", product.Price/100)
-	return nil
 }
 
 // Validate validates the required parameters sent through the http request body

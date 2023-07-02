@@ -30,20 +30,6 @@ func StoreTaxHandler(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, res)
 }
 
-func ShowTaxHandler(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	ID, err := strconv.ParseUint(id, 10, 32)
-	if err != nil {
-		u.Respond(w, u.Message(false, "Error while parsing ID"))
-		return
-	}
-
-	tax := &models.Tax{}
-
-	data := tax.Show(uint(ID))
-	u.Respond(w, data)
-}
-
 func UpdateTaxHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)

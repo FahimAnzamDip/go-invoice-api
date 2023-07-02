@@ -14,7 +14,7 @@ type Payment struct {
 	InvoiceID     uint     `gorm:"not null" json:"invoice_id"`
 	Invoice       *Invoice `gorm:"foreignKey:InvoiceID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
 	ReceivedOn    string   `gorm:"not null;type:date;" json:"received_on"`
-	Amount        float32  `gorm:"type:integer;not null;default:0;" json:"amount"`
+	Amount        float32  `gorm:"type:numeric(7,2);not null;default:0;" json:"amount"`
 	PaymentMethod string   `gorm:"not null;" json:"payment_method"`
 	Note          string   `gorm:"type:text;" json:"note"`
 }
@@ -31,19 +31,6 @@ func (payment *Payment) BeforeCreate(tx *gorm.DB) error {
 		reference = fmt.Sprintf("#PAY-%05d", *maxID+1)
 	}
 	tx.Statement.SetColumn("reference", reference)
-	tx.Statement.SetColumn("amount", payment.Amount*100)
-	return nil
-}
-
-// BeforeUpdate is called implicitly just before updating an entry
-func (payment *Payment) BeforeUpdate(tx *gorm.DB) error {
-	tx.Statement.SetColumn("amount", payment.Amount*100)
-	return nil
-}
-
-// AfterFind is called implicitly just after finding an entry
-func (payment *Payment) AfterFind(tx *gorm.DB) error {
-	tx.Statement.SetColumn("amount", payment.Amount/100)
 	return nil
 }
 
@@ -99,23 +86,6 @@ func (payment *Payment) Store() map[string]interface{} {
 	}
 
 	res := u.Message(true, "Payment created successfully")
-	res["data"] = payment
-
-	return res
-}
-
-// Show function returns specific entry by ID
-func (payment *Payment) Show(id uint) map[string]interface{} {
-	err := db.Where("id = ?", id).First(&payment).Error
-	if err != nil {
-		return u.Message(false, err.Error())
-	}
-
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		return u.Message(false, "Record not found")
-	}
-
-	res := u.Message(true, "")
 	res["data"] = payment
 
 	return res

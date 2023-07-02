@@ -63,7 +63,6 @@ func Configure() *chi.Mux {
 		// Categories routes
 		ar.Get("/categories", handlers.IndexCategoryHandler)
 		ar.Post("/categories", handlers.StoreCategoryHandler)
-		ar.Get("/categories/{id}", handlers.ShowCategoryHandler)
 		ar.Put("/categories/{id}", handlers.UpdateCategoryHandler)
 		ar.Delete("/categories/{id}", handlers.DestroyCategoryHandler)
 
@@ -80,7 +79,6 @@ func Configure() *chi.Mux {
 		// Tags routes
 		ar.Get("/tags", handlers.IndexTagHandler)
 		ar.Post("/tags", handlers.StoreTagHandler)
-		ar.Get("/tags/{id}", handlers.ShowTagHandler)
 		ar.Put("/tags/{id}", handlers.UpdateTagHandler)
 		ar.Delete("/tags/{id}", handlers.DestroyTagHandler)
 
@@ -94,7 +92,6 @@ func Configure() *chi.Mux {
 		// Taxes routes
 		ar.Get("/taxes", handlers.IndexTaxHandler)
 		ar.Post("/taxes", handlers.StoreTaxHandler)
-		ar.Get("/taxes/{id}", handlers.ShowTaxHandler)
 		ar.Put("/taxes/{id}", handlers.UpdateTaxHandler)
 		ar.Delete("/taxes/{id}", handlers.DestroyTaxHandler)
 
@@ -108,9 +105,20 @@ func Configure() *chi.Mux {
 		// Payments routes
 		ar.Get("/payments", handlers.IndexPaymentHandler)
 		ar.Post("/payments", handlers.StorePaymentHandler)
-		ar.Get("/payments/{id}", handlers.ShowPaymentHandler)
 		ar.Put("/payments/{id}", handlers.UpdatePaymentHandler)
 		ar.Delete("/payments/{id}", handlers.DestroyPaymentHandler)
+
+		// Purposes routes
+		ar.Get("/purposes", handlers.IndexPurposeHandler)
+		ar.Post("/purposes", handlers.StorePurposeHandler)
+		ar.Put("/purposes/{id}", handlers.UpdatePurposeHandler)
+		ar.Delete("/purposes/{id}", handlers.DestroyPurposeHandler)
+
+		// Expenses routes
+		ar.Get("/expenses", handlers.IndexExpenseHandler)
+		ar.Post("/expenses", handlers.StoreExpenseHandler)
+		ar.Put("/expenses/{id}", handlers.UpdateExpenseHandler)
+		ar.Delete("/expenses/{id}", handlers.DestroyExpenseHandler)
 	})
 
 	// Mount to main router
