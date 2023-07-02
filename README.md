@@ -1,6 +1,6 @@
 ## WORK IN PROGRESS
 
-### FEATURES
+### Achiveable with this API (When Finished)
 
 - **Informative dashboard**
     - Displays the Summary of all information in one singular view.
@@ -18,7 +18,7 @@
     - Generate and Autosend the recurred invoice to the client (Monthly/Quarterly/Semi-Annually/Annually)
 
 - **Product Management**
-    - You are able to add products/Services according to their category.
+    - You are able to add Products/Services according to their category.
 
 - **Reports**
-    - See different reports to learn about your client and their payment status at a glance
+    - See different reports to learn about client and their payment status at a glance
