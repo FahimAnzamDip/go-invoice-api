@@ -5,12 +5,12 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/fahimanzamdip/go-invoice-api/routes"
+	"github.com/fahimanzamdip/go-invoice-api/router"
 	"github.com/joho/godotenv"
 )
 
 func init() {
-	log.Println("Go-Shop-Api Starting.....")
+	log.Println("<========= Go-Invoice-Api Starting =========>")
 	if err := godotenv.Load(); err != nil {
 		log.Println("File .env not found, reading configuration from ENV")
 		return
@@ -19,7 +19,7 @@ func init() {
 }
 
 func main() {
-	r := routes.Configure()
+	r := router.Configure()
 
 	port := os.Getenv("server_port")
 	if port == "" {

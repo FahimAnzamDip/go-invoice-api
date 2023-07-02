@@ -2,28 +2,21 @@ package models
 
 import (
 	"log"
-	"os"
 
-	"github.com/joho/godotenv"
-	"gorm.io/driver/mysql"
+	"github.com/fahimanzamdip/go-invoice-api/config"
 	"gorm.io/gorm"
 )
 
 var db *gorm.DB
-
-var DEBUGMODE bool
+var debug bool
 
 func init() {
-	DEBUGMODE = true
+	debug = true
 
-	if err := godotenv.Load(); err != nil {
-		log.Println("File .env not found, reading configuration from ENV for DB connection")
-		return
-	}
-	connect()
-	db = GetDB()
+	config.Connect()
+	db = config.GetDB()
 
-	if DEBUGMODE {
+	if debug {
 		// Auto Migration
 		err := migrate()
 		if err != nil {
@@ -37,26 +30,6 @@ func init() {
 			return
 		}
 	}
-}
-
-func connect() {
-	dbUser := os.Getenv("db_user")
-	dbPass := os.Getenv("db_pass")
-	dbHost := os.Getenv("db_host")
-	dbPort := os.Getenv("db_port")
-	dbName := os.Getenv("db_name")
-
-	// dsn := "host=" + dbHost + " " + "user=" + dbUser + " " + "password=" + dbPass + " " + "dbname=" + dbName + " " + "port=" + dbPort + " sslmode=disable TimeZone=Asia/Dhaka"
-
-	dsn := dbUser + ":" + dbPass + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
-
-	log.Println(dsn)
-
-	d, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	if err != nil {
-		panic(err)
-	}
-	db = d
 }
 
 func migrate() error {
@@ -86,8 +59,4 @@ func seed() error {
 	}).Error
 
 	return err
-}
-
-func GetDB() *gorm.DB {
-	return db
 }

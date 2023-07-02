@@ -29,6 +29,7 @@ type Invoice struct {
 	InvoiceProducts []*InvoiceProduct `gorm:"foreignKey:InvoiceID;" json:"invoice_products,omitempty"`
 	PaymentMethod   string            `gorm:"-" json:"payment_method,omitempty"`
 	Note            string            `gorm:"-" json:"note,omitempty"`
+	Payments        []*Payment        `gorm:"foreignKey:InvoiceID;" json:"payments,omitempty"`
 }
 
 // BeforeCreate is called implicitly just before creating an entry
@@ -118,7 +119,7 @@ func (invoice *Invoice) Store() map[string]interface{} {
 		invoice.Status = "Partially Paid"
 	}
 
-	err := db.Omit("InvoiceProducts").Create(&invoice).Error
+	err := db.Omit("InvoiceProducts", "Payments").Create(&invoice).Error
 	if err != nil {
 		return u.Message(false, err.Error())
 	}
@@ -158,7 +159,7 @@ func (invoice *Invoice) Store() map[string]interface{} {
 // Show function returns specific entry by ID
 func (invoice *Invoice) Show(id uint) map[string]interface{} {
 	err := db.Preload("Client.User").Preload("InvoiceProducts").
-		Where("id = ?", id).First(&invoice).Error
+		Preload("Payments").Where("id = ?", id).First(&invoice).Error
 	if err != nil {
 		return u.Message(false, err.Error())
 	}
@@ -180,7 +181,7 @@ func (invoice *Invoice) Update(id uint) map[string]interface{} {
 		return u.Message(false, err.Error())
 	}
 
-	err = db.Where("id = ?", id).Omit("InvoiceProducts").Updates(&invoice).Error
+	err = db.Where("id = ?", id).Omit("InvoiceProducts", "Payments").Updates(&invoice).Error
 	if err != nil {
 		return u.Message(false, err.Error())
 	}

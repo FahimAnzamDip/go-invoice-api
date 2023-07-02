@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
@@ -10,27 +10,27 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func IndexTagHandler(w http.ResponseWriter, r *http.Request) {
-	tag := &models.Tag{}
+func IndexTaxHandler(w http.ResponseWriter, r *http.Request) {
+	tax := &models.Tax{}
 
-	data := tag.Index()
+	data := tax.Index()
 	u.Respond(w, data)
 }
 
-func StoreTagHandler(w http.ResponseWriter, r *http.Request) {
-	tag := &models.Tag{}
+func StoreTaxHandler(w http.ResponseWriter, r *http.Request) {
+	tax := &models.Tax{}
 
-	err := json.NewDecoder(r.Body).Decode(tag)
+	err := json.NewDecoder(r.Body).Decode(tax)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Error while decoding request body"))
 		return
 	}
 
-	res := tag.Store()
+	res := tax.Store()
 	u.Respond(w, res)
 }
 
-func ShowTagHandler(w http.ResponseWriter, r *http.Request) {
+func ShowTaxHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -38,13 +38,13 @@ func ShowTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tag := &models.Tag{}
+	tax := &models.Tax{}
 
-	data := tag.Show(uint(ID))
+	data := tax.Show(uint(ID))
 	u.Respond(w, data)
 }
 
-func UpdateTagHandler(w http.ResponseWriter, r *http.Request) {
+func UpdateTaxHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -52,18 +52,18 @@ func UpdateTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tag := &models.Tag{}
-	err = json.NewDecoder(r.Body).Decode(tag)
+	tax := &models.Tax{}
+	err = json.NewDecoder(r.Body).Decode(tax)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid Request"))
 		return
 	}
 
-	res := tag.Update(uint(ID))
+	res := tax.Update(uint(ID))
 	u.Respond(w, res)
 }
 
-func DestroyTagHandler(w http.ResponseWriter, r *http.Request) {
+func DestroyTaxHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -71,8 +71,8 @@ func DestroyTagHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tag := &models.Tag{}
+	tax := &models.Tax{}
 
-	res := tag.Destroy(uint(ID))
+	res := tax.Destroy(uint(ID))
 	u.Respond(w, res)
 }

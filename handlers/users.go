@@ -1,8 +1,7 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -11,28 +10,27 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func IndexInvoiceHandler(w http.ResponseWriter, r *http.Request) {
-	invoice := &models.Invoice{}
+func IndexUserHandler(w http.ResponseWriter, r *http.Request) {
+	user := &models.User{}
 
-	data := invoice.Index()
+	data := user.Index()
 	u.Respond(w, data)
 }
 
-func StoreInvoiceHandler(w http.ResponseWriter, r *http.Request) {
-	invoice := &models.Invoice{}
+func StoreUserHandler(w http.ResponseWriter, r *http.Request) {
+	user := &models.User{}
 
-	err := json.NewDecoder(r.Body).Decode(invoice)
+	err := json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
-		log.Println(err)
 		u.Respond(w, u.Message(false, "Error while decoding request body"))
 		return
 	}
 
-	res := invoice.Store()
+	res := user.Store()
 	u.Respond(w, res)
 }
 
-func ShowInvoiceHandler(w http.ResponseWriter, r *http.Request) {
+func ShowUserHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -40,13 +38,13 @@ func ShowInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	invoice := &models.Invoice{}
+	user := &models.User{}
+	data := user.Show(uint(ID))
 
-	data := invoice.Show(uint(ID))
 	u.Respond(w, data)
 }
 
-func UpdateInvoiceHandler(w http.ResponseWriter, r *http.Request) {
+func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -54,18 +52,18 @@ func UpdateInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	invoice := &models.Invoice{}
-	err = json.NewDecoder(r.Body).Decode(invoice)
+	user := &models.User{}
+	err = json.NewDecoder(r.Body).Decode(user)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid Request"))
 		return
 	}
 
-	res := invoice.Update(uint(ID))
+	res := user.Update(uint(ID))
 	u.Respond(w, res)
 }
 
-func DestroyInvoiceHandler(w http.ResponseWriter, r *http.Request) {
+func DestroyUserHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -73,8 +71,8 @@ func DestroyInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	invoice := &models.Invoice{}
+	user := &models.User{}
 
-	data := invoice.Destroy(uint(ID))
-	u.Respond(w, data)
+	res := user.Destroy(uint(ID))
+	u.Respond(w, res)
 }

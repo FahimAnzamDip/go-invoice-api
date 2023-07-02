@@ -1,6 +1,7 @@
 package models
 
 import (
+	"errors"
 	"fmt"
 
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
@@ -87,24 +88,7 @@ func (payment *Payment) Store() map[string]interface{} {
 
 	invoice := &Invoice{}
 
-	err := db.Where("id = ?", payment.InvoiceID).Take(invoice).Error
-	if err != nil {
-		return u.Message(false, err.Error())
-	}
-
-	paid := invoice.PaidAmount + payment.Amount
-	due := invoice.TotalAmount - paid
-	invoice.PaidAmount = paid
-	invoice.DueAmount = due
-	if invoice.DueAmount == invoice.TotalAmount {
-		invoice.Status = "Unpaid"
-	} else if invoice.DueAmount == 0 {
-		invoice.Status = "Paid"
-	} else {
-		invoice.Status = "Partially Paid"
-	}
-
-	err = db.Where("id = ?", invoice.ID).Updates(invoice).Error
+	_, err := adjustInvoice(invoice, payment, "create")
 	if err != nil {
 		return u.Message(false, err.Error())
 	}
@@ -118,4 +102,139 @@ func (payment *Payment) Store() map[string]interface{} {
 	res["data"] = payment
 
 	return res
+}
+
+// Show function returns specific entry by ID
+func (payment *Payment) Show(id uint) map[string]interface{} {
+	err := db.Where("id = ?", id).First(&payment).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return u.Message(false, "Record not found")
+	}
+
+	res := u.Message(true, "")
+	res["data"] = payment
+
+	return res
+}
+
+// Update function updates specific entry by ID
+func (payment *Payment) Update(id uint) map[string]interface{} {
+	pay, err := payment.exists(id)
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	// Revert back to previous amounts
+	currInv := &Invoice{}
+	err = db.Where("id = ?", pay.InvoiceID).Take(currInv).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+	currInv.PaidAmount -= pay.Amount
+	currInv.DueAmount = currInv.TotalAmount - currInv.PaidAmount
+	// Adjust amounts again
+	_, err = adjustInvoice(currInv, payment, "update")
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	err = db.Where("id = ?", id).Updates(&payment).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	newPay, _ := payment.exists(id)
+
+	res := u.Message(true, "Payment Updated Successfully")
+	res["data"] = newPay
+
+	return res
+}
+
+// Destroy permanently removes a entry
+func (payment *Payment) Destroy(id uint) map[string]interface{} {
+	payment, err := payment.exists(id)
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	invoice := &Invoice{}
+
+	_, err = adjustInvoice(invoice, payment, "destroy")
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	err = db.Where("id = ?", id).Unscoped().Delete(&payment).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	res := u.Message(true, "Payment Deleted Successfully")
+	res["data"] = "1"
+
+	return res
+}
+
+// exists function checks if the entry exists or not
+func (payment *Payment) exists(id uint) (*Payment, error) {
+	pay := &Payment{}
+	err := db.Where("id = ?", id).Take(pay).Error
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return &Payment{}, errors.New("no record found")
+	}
+
+	if err != nil {
+		return &Payment{}, err
+	}
+
+	return pay, nil
+}
+
+func adjustInvoice(inv *Invoice, pay *Payment, action string) (*Invoice, error) {
+	switch action {
+	case "create":
+		err := db.Where("id = ?", pay.InvoiceID).Take(inv).Error
+		if err != nil {
+			return &Invoice{}, err
+		}
+		paid := inv.PaidAmount + pay.Amount
+		due := inv.TotalAmount - paid
+		inv.PaidAmount = paid
+		inv.DueAmount = due
+	case "update":
+		paid := inv.PaidAmount + pay.Amount
+		due := inv.TotalAmount - paid
+		inv.PaidAmount = paid
+		inv.DueAmount = due
+	case "destroy":
+		err := db.Where("id = ?", pay.InvoiceID).Take(inv).Error
+		if err != nil {
+			return &Invoice{}, err
+		}
+		paid := inv.PaidAmount - pay.Amount
+		due := inv.TotalAmount - paid
+		inv.PaidAmount = paid
+		inv.DueAmount = due
+	}
+
+	if inv.DueAmount == inv.TotalAmount {
+		inv.Status = "Unpaid"
+	} else if inv.DueAmount == 0 {
+		inv.Status = "Paid"
+	} else {
+		inv.Status = "Partially Paid"
+	}
+
+	err := db.Where("id = ?", inv.ID).Updates(inv).Error
+	if err != nil {
+		return &Invoice{}, err
+	}
+
+	return inv, nil
 }

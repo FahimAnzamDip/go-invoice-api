@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
@@ -10,27 +10,27 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func IndexCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	category := &models.Category{}
+func IndexTagHandler(w http.ResponseWriter, r *http.Request) {
+	tag := &models.Tag{}
 
-	data := category.Index()
+	data := tag.Index()
 	u.Respond(w, data)
 }
 
-func StoreCategoryHandler(w http.ResponseWriter, r *http.Request) {
-	category := &models.Category{}
+func StoreTagHandler(w http.ResponseWriter, r *http.Request) {
+	tag := &models.Tag{}
 
-	err := json.NewDecoder(r.Body).Decode(category)
+	err := json.NewDecoder(r.Body).Decode(tag)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Error while decoding request body"))
 		return
 	}
 
-	res := category.Store()
+	res := tag.Store()
 	u.Respond(w, res)
 }
 
-func ShowCategoryHandler(w http.ResponseWriter, r *http.Request) {
+func ShowTagHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -38,13 +38,13 @@ func ShowCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category := &models.Category{}
+	tag := &models.Tag{}
 
-	data := category.Show(uint(ID))
+	data := tag.Show(uint(ID))
 	u.Respond(w, data)
 }
 
-func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
+func UpdateTagHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -52,18 +52,18 @@ func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category := &models.Category{}
-	err = json.NewDecoder(r.Body).Decode(category)
+	tag := &models.Tag{}
+	err = json.NewDecoder(r.Body).Decode(tag)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid Request"))
 		return
 	}
 
-	res := category.Update(uint(ID))
+	res := tag.Update(uint(ID))
 	u.Respond(w, res)
 }
 
-func DestroyCategoryHandler(w http.ResponseWriter, r *http.Request) {
+func DestroyTagHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -71,8 +71,8 @@ func DestroyCategoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	category := &models.Category{}
+	tag := &models.Tag{}
 
-	res := category.Destroy(uint(ID))
+	res := tag.Destroy(uint(ID))
 	u.Respond(w, res)
 }

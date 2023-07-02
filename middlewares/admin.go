@@ -12,15 +12,10 @@ func AdminMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		r = app.GetToken(w, r)
 
-		// Check if the user is authenticated and is_admin field is true
 		if user, ok := r.Context().Value(app.UserKey).(models.UserInfo); ok && user.IsAdmin {
-			// User is an admin, proceed to the next handler
 			next.ServeHTTP(w, r)
 		} else {
-			// User is not an admin, return an error response or redirect as needed
-			writeError(w, r, "Access denied. You must be admin to access.")
-			// Alternatively, you can redirect to a specific page:
-			// http.Redirect(w, r, "/unauthorized", http.StatusFound)
+			writeError(w, r, "Access denied, You must be an admin to access!")
 		}
 	})
 }

@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
@@ -50,5 +50,25 @@ func ValidateUserHandler(w http.ResponseWriter, r *http.Request) {
 	user.Token = splitted[1]
 
 	res := user.ValidateUser(userInfo.UserId)
+	u.Respond(w, res)
+}
+
+func GetUserByIdHandler(w http.ResponseWriter, r *http.Request) {
+	userInfoValue := r.Context().Value(app.UserKey)
+	var userInfo models.UserInfo
+	if userInfoValue == nil {
+		return
+	} else {
+		userInfo = userInfoValue.(models.UserInfo)
+	}
+
+	user := &models.User{}
+
+	tokenHeader := r.Header.Get("Authorization") // Grab the token from the header
+	splitted := strings.Split(tokenHeader, " ")  // The token normally comes in format `Bearer {token-body}`,
+	// we check if the retrieved token matched this requirement
+	user.Token = splitted[1]
+
+	res := user.Show(userInfo.UserId)
 	u.Respond(w, res)
 }

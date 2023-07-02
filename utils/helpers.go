@@ -35,12 +35,3 @@ func ERROR(w http.ResponseWriter, statusCode int, err error) {
 
 	JSON(w, http.StatusBadRequest, nil)
 }
-
-// func ParseId(w http.ResponseWriter, r *http.Request) (int64, error) {
-// 	id := chi.URLParam(r, "id")
-// 	ID, err := strconv.ParseInt(id, 10, 64)
-// 	if err != nil {
-// 		return 0, errors.New("error while parsing id")
-// 	}
-// 	return ID, nil
-// }

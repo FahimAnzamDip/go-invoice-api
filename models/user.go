@@ -36,6 +36,7 @@ type UserInfo struct {
 	Email   string
 	Mobile  string
 	IsAdmin bool
+	Token   string
 }
 
 type AuthUser struct {
@@ -49,6 +50,7 @@ type UserResponse struct {
 	Email   string `json:"email"`
 	Mobile  string `json:"mobile"`
 	IsAdmin bool   `json:"is_admin"`
+	Token   string `json:"token,omitempty"`
 }
 
 // Validate incoming user details...
@@ -221,6 +223,7 @@ func (user *User) Show(id uint) map[string]interface{} {
 		Email:   usr.Email,
 		Mobile:  usr.Mobile,
 		IsAdmin: usr.IsAdmin,
+		Token:   user.Token,
 	}
 
 	res := u.Message(true, "")

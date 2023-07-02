@@ -1,7 +1,8 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -10,28 +11,28 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func IndexClientHandler(w http.ResponseWriter, r *http.Request) {
-	client := &models.Client{}
+func IndexInvoiceHandler(w http.ResponseWriter, r *http.Request) {
+	invoice := &models.Invoice{}
 
-	data := client.Index()
+	data := invoice.Index()
 	u.Respond(w, data)
 }
 
-// Store function creates a new entry
-func StoreClientHandler(w http.ResponseWriter, r *http.Request) {
-	client := &models.Client{}
+func StoreInvoiceHandler(w http.ResponseWriter, r *http.Request) {
+	invoice := &models.Invoice{}
 
-	err := json.NewDecoder(r.Body).Decode(client)
+	err := json.NewDecoder(r.Body).Decode(invoice)
 	if err != nil {
+		log.Println(err)
 		u.Respond(w, u.Message(false, "Error while decoding request body"))
 		return
 	}
 
-	res := client.Store()
+	res := invoice.Store()
 	u.Respond(w, res)
 }
 
-func ShowClientHandler(w http.ResponseWriter, r *http.Request) {
+func ShowInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -39,13 +40,13 @@ func ShowClientHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &models.Client{}
+	invoice := &models.Invoice{}
 
-	data := client.Show(uint(ID))
+	data := invoice.Show(uint(ID))
 	u.Respond(w, data)
 }
 
-func UpdateClientHandler(w http.ResponseWriter, r *http.Request) {
+func UpdateInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -53,18 +54,18 @@ func UpdateClientHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &models.Client{}
-	err = json.NewDecoder(r.Body).Decode(client)
+	invoice := &models.Invoice{}
+	err = json.NewDecoder(r.Body).Decode(invoice)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid Request"))
 		return
 	}
 
-	res := client.Update(uint(ID))
+	res := invoice.Update(uint(ID))
 	u.Respond(w, res)
 }
 
-func DestroyClientHandler(w http.ResponseWriter, r *http.Request) {
+func DestroyInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -72,8 +73,8 @@ func DestroyClientHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	client := &models.Client{}
+	invoice := &models.Invoice{}
 
-	res := client.Destroy(uint(ID))
-	u.Respond(w, res)
+	data := invoice.Destroy(uint(ID))
+	u.Respond(w, data)
 }

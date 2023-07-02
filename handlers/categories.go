@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
@@ -10,27 +10,27 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func IndexTaxHandler(w http.ResponseWriter, r *http.Request) {
-	tax := &models.Tax{}
+func IndexCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	category := &models.Category{}
 
-	data := tax.Index()
+	data := category.Index()
 	u.Respond(w, data)
 }
 
-func StoreTaxHandler(w http.ResponseWriter, r *http.Request) {
-	tax := &models.Tax{}
+func StoreCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	category := &models.Category{}
 
-	err := json.NewDecoder(r.Body).Decode(tax)
+	err := json.NewDecoder(r.Body).Decode(category)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Error while decoding request body"))
 		return
 	}
 
-	res := tax.Store()
+	res := category.Store()
 	u.Respond(w, res)
 }
 
-func ShowTaxHandler(w http.ResponseWriter, r *http.Request) {
+func ShowCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -38,13 +38,13 @@ func ShowTaxHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tax := &models.Tax{}
+	category := &models.Category{}
 
-	data := tax.Show(uint(ID))
+	data := category.Show(uint(ID))
 	u.Respond(w, data)
 }
 
-func UpdateTaxHandler(w http.ResponseWriter, r *http.Request) {
+func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -52,18 +52,18 @@ func UpdateTaxHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tax := &models.Tax{}
-	err = json.NewDecoder(r.Body).Decode(tax)
+	category := &models.Category{}
+	err = json.NewDecoder(r.Body).Decode(category)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid Request"))
 		return
 	}
 
-	res := tax.Update(uint(ID))
+	res := category.Update(uint(ID))
 	u.Respond(w, res)
 }
 
-func DestroyTaxHandler(w http.ResponseWriter, r *http.Request) {
+func DestroyCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
 	if err != nil {
@@ -71,8 +71,8 @@ func DestroyTaxHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	tax := &models.Tax{}
+	category := &models.Category{}
 
-	res := tax.Destroy(uint(ID))
+	res := category.Destroy(uint(ID))
 	u.Respond(w, res)
 }

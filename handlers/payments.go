@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"encoding/json"
@@ -10,27 +10,27 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func IndexUserHandler(w http.ResponseWriter, r *http.Request) {
-	user := &models.User{}
+func IndexPaymentHandler(w http.ResponseWriter, r *http.Request) {
+	payment := &models.Payment{}
 
-	data := user.Index()
+	data := payment.Index()
 	u.Respond(w, data)
 }
 
-func StoreUserHandler(w http.ResponseWriter, r *http.Request) {
-	user := &models.User{}
+func StorePaymentHandler(w http.ResponseWriter, r *http.Request) {
+	payment := &models.Payment{}
 
-	err := json.NewDecoder(r.Body).Decode(user)
+	err := json.NewDecoder(r.Body).Decode(payment)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Error while decoding request body"))
 		return
 	}
 
-	res := user.Store()
+	res := payment.Store()
 	u.Respond(w, res)
 }
 
-func ShowUserHandler(w http.ResponseWriter, r *http.Request) {
+func ShowPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -38,13 +38,13 @@ func ShowUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := &models.User{}
-	data := user.Show(uint(ID))
+	payment := &models.Payment{}
 
+	data := payment.Show(uint(ID))
 	u.Respond(w, data)
 }
 
-func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
+func UpdatePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -52,18 +52,18 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := &models.User{}
-	err = json.NewDecoder(r.Body).Decode(user)
+	payment := &models.Payment{}
+	err = json.NewDecoder(r.Body).Decode(payment)
 	if err != nil {
 		u.Respond(w, u.Message(false, "Invalid Request"))
 		return
 	}
 
-	res := user.Update(uint(ID))
+	res := payment.Update(uint(ID))
 	u.Respond(w, res)
 }
 
-func DestroyUserHandler(w http.ResponseWriter, r *http.Request) {
+func DestroyPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseInt(id, 10, 64)
 	if err != nil {
@@ -71,8 +71,8 @@ func DestroyUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user := &models.User{}
+	payment := &models.Payment{}
 
-	res := user.Destroy(uint(ID))
+	res := payment.Destroy(uint(ID))
 	u.Respond(w, res)
 }
