@@ -55,6 +55,8 @@ func Configure() *chi.Mux {
 	// Admin routes
 	ar.Group(func(ar chi.Router) {
 		ar.Use(middlewares.AdminMiddleware)
+		// Dashboard routes
+		ar.Get("/dashboard/summary", handlers.DashboardHandler)
 		// User routes
 		ar.Get("/users", handlers.IndexUserHandler)
 		ar.Get("/users/{id}", handlers.ShowUserHandler)
