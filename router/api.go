@@ -23,7 +23,7 @@ func Configure() *chi.Mux {
 	}))
 
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		utils.Respond(w, utils.Message(true, "Welcome to Go-Shop-Api"))
+		utils.Respond(w, utils.Message(true, "Welcome to Go-Shop-Api by, Fahim Anzam"))
 	})
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		utils.Respond(w, utils.Message(false, "404 the requested route is not available"))
