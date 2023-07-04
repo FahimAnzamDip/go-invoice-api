@@ -156,6 +156,14 @@ func (invoice *Invoice) Update(id uint) map[string]interface{} {
 		return u.Message(false, err.Error())
 	}
 
+	if invoice.DueAmount == invoice.TotalAmount {
+		invoice.Status = "Unpaid"
+	} else if invoice.DueAmount == 0 {
+		invoice.Status = "Paid"
+	} else {
+		invoice.Status = "Partially Paid"
+	}
+
 	err = db.Where("id = ?", id).Omit("InvoiceProducts", "Payments").Updates(&invoice).Error
 	if err != nil {
 		return u.Message(false, err.Error())
