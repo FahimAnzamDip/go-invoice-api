@@ -1,10 +1,13 @@
 package models
 
 import (
+	"github.com/fahimanzamdip/go-invoice-api/config"
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
+	"github.com/patrickmn/go-cache"
 	"gorm.io/gorm"
 )
 
+var settingsCacheKey string = "settings"
 type Setting struct {
 	gorm.Model
 	CompanyName       string `gorm:"not null;" json:"company_name"`
@@ -25,18 +28,24 @@ type Setting struct {
 
 // GetSettings returns all the settings data
 func (setting *Setting) GetSettings() map[string]interface{} {
-	err := db.First(&setting).Error
-	if err != nil {
-		return u.Message(false, err.Error())
+	stngs := &Setting{}
+	if settings, found := config.DBCache.Get(settingsCacheKey); found {
+		stngs = settings.(*Setting)
+	} else {
+		err := db.First(&stngs).Error
+		if err != nil {
+			return u.Message(false, err.Error())
+		}
+		config.DBCache.Set(settingsCacheKey, stngs, cache.DefaultExpiration)
 	}
 
 	res := u.Message(true, "")
-	res["data"] = setting
+	res["data"] = stngs
 
 	return res
 }
 
-// Update updates all the settings in the db
+// Update updates settings in the db
 func (setting *Setting) Update() map[string]interface{} {
 	stng := Setting{}
 
@@ -49,6 +58,8 @@ func (setting *Setting) Update() map[string]interface{} {
 	if err != nil {
 		return u.Message(false, err.Error())
 	}
+
+	config.DBCache.Delete(settingsCacheKey)
 
 	res := u.Message(true, "")
 	res["data"] = setting
