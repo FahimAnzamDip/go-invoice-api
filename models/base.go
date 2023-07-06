@@ -11,7 +11,7 @@ var db *gorm.DB
 var debug bool
 
 func init() {
-	debug = true
+	debug = false
 
 	config.Connect()
 	db = config.GetDB()
@@ -45,20 +45,47 @@ func migrate() error {
 		&Payment{},
 		&Purpose{},
 		&Expense{},
+		&Setting{},
 	)
 
 	return err
 }
 
 func seed() error {
+	var err error
+
 	// Create a Super User
-	err := db.Create(&User{
-		Name:     "Administrator",
-		Email:    "super.admin@test.com",
-		Mobile:   "12345678901",
-		Password: "$2a$12$1ojxUBODleIVVvFo1Lvysu/WSpVXi8yUb2zq6SIWJe6M9OJv3yRf2", // 123456
-		IsAdmin:  true,
-	}).Error
+	// err = db.Create(&User{
+	// 	Name:     "Administrator",
+	// 	Email:    "super.admin@test.com",
+	// 	Mobile:   "12345678901",
+	// 	Password: "$2a$12$1ojxUBODleIVVvFo1Lvysu/WSpVXi8yUb2zq6SIWJe6M9OJv3yRf2", // 123456
+	// 	IsAdmin:  true,
+	// }).Error
+	// if err != nil {
+	// 	return err
+	// }
+
+	// Create settings
+	// err = db.Create(&Setting{
+	// 	CompanyName:       "Company",
+	// 	CompanyAddress:    "Dhaka, Bangladesh",
+	// 	CompanyEmail:      "company@mail.com",
+	// 	CompanyMobile:     "12345678901",
+	// 	Logo:              "public/uploads/logo.png",
+	// 	Favicon:           "public/uploads/favicon.png",
+	// 	VatNumber:         "",
+	// 	TimeZone:          "Asia/Dhaka",
+	// 	DateFormat:        "d-m-Y",
+	// 	CurrencySymbol:    "$",
+	// 	DecimalSeparator:  ".",
+	// 	ThousandSeparator: ",",
+	// 	NumberOfDecimal:   2,
+	// 	CurrencyPosition:  "prefix_with_space",
+	// }).Error
+	// if err != nil {
+	// 	return err
+	// }
 
 	return err
 }

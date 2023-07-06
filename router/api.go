@@ -123,6 +123,10 @@ func Configure() *chi.Mux {
 		ar.Post("/expenses", handlers.StoreExpenseHandler)
 		ar.Put("/expenses/{id}", handlers.UpdateExpenseHandler)
 		ar.Delete("/expenses/{id}", handlers.DestroyExpenseHandler)
+
+		// Settings routes
+		ar.Get("/settings", handlers.GetSettingsHandler)
+		ar.Put("/settings", handlers.UpdateSettingsHandler)
 	})
 
 	// Mount to main router
