@@ -3,8 +3,10 @@ package models
 import (
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
+	"github.com/fahimanzamdip/go-invoice-api/services"
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
 	"gorm.io/gorm"
 )
@@ -123,6 +125,24 @@ func (invoice *Invoice) Store() map[string]interface{} {
 	err = db.Create(payment).Error
 	if err != nil {
 		return u.Message(false, err.Error())
+	}
+
+	err = db.Preload("Client.User").Preload("InvoiceProducts.Tax").
+		Preload("Payments").Where("id = ?", invoice.ID).First(&invoice).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	pdfData := struct {
+		Invoice   *Invoice
+		Reference string
+	}{
+		Invoice:   invoice,
+		Reference: invoice.Reference,
+	}
+	_, err = services.NewPDFService().GenerateInvoicePDF(pdfData)
+	if err != nil {
+		log.Println(err.Error())
 	}
 
 	res := u.Message(true, "Invoice created successfully")

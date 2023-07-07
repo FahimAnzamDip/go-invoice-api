@@ -11,7 +11,7 @@ var db *gorm.DB
 var debug bool
 
 func init() {
-	debug = false
+	debug = true
 
 	config.Connect()
 	db = config.GetDB()

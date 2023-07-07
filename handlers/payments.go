@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -9,6 +10,17 @@ import (
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
 	"github.com/go-chi/chi/v5"
 )
+
+func PaymentMethodsHandler(w http.ResponseWriter, r *http.Request) {
+	filePath := "./data/payment_methods.json"
+	fileContent, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		u.Respond(w, u.Message(false, err.Error()))
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(fileContent)
+}
 
 func IndexPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	payment := &models.Payment{}

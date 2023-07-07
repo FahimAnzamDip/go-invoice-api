@@ -107,6 +107,7 @@ func Configure() *chi.Mux {
 		ar.Delete("/invoices/{id}", handlers.DestroyInvoiceHandler)
 
 		// Payments routes
+		ar.Get("/payments/methods", handlers.PaymentMethodsHandler)
 		ar.Get("/payments", handlers.IndexPaymentHandler)
 		ar.Post("/payments", handlers.StorePaymentHandler)
 		ar.Put("/payments/{id}", handlers.UpdatePaymentHandler)
@@ -125,6 +126,7 @@ func Configure() *chi.Mux {
 		ar.Delete("/expenses/{id}", handlers.DestroyExpenseHandler)
 
 		// Settings routes
+		ar.Get("/settings/data", handlers.SettingsDataHandler)
 		ar.Get("/settings", handlers.GetSettingsHandler)
 		ar.Put("/settings", handlers.UpdateSettingsHandler)
 	})

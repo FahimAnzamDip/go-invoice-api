@@ -8,6 +8,7 @@ import (
 )
 
 var settingsCacheKey string = "settings"
+
 type Setting struct {
 	gorm.Model
 	CompanyName       string `gorm:"not null;" json:"company_name"`

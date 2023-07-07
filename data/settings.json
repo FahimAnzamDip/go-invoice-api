@@ -1,0 +1,10 @@
+{
+    "data": {
+        "date_formats": ["d-m-Y", "m-d-Y", "Y-m-d", "m/d/Y", "d/m/Y", "Y/m/d", "m.d.Y", "d.m.Y", "Y.m.d"],
+        "currency_symbols": ["'prefix_only'", "prefix_with_space", "suffix_only", "suffix_with_space"],
+        "decimal_separators": [".", ","],
+        "thousand_separators": [".", ","],
+        "number_of_decimals": ["0", "2"],
+        "currency_position": ["prefix", "prefix_with_space", "suffix", "suffix_with_space"]
+    }
+}
