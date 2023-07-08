@@ -1,13 +1,15 @@
 package models
 
 import (
+	"log"
+
 	"github.com/fahimanzamdip/go-invoice-api/config"
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
 	"github.com/patrickmn/go-cache"
 	"gorm.io/gorm"
 )
 
-var settingsCacheKey string = "settings"
+const SettingsCacheKey string = "settings"
 
 type Setting struct {
 	gorm.Model
@@ -30,14 +32,14 @@ type Setting struct {
 // GetSettings returns all the settings data
 func (setting *Setting) GetSettings() map[string]interface{} {
 	stngs := &Setting{}
-	if settings, found := config.DBCache.Get(settingsCacheKey); found {
+	if settings, found := config.DBCache.Get(SettingsCacheKey); found {
 		stngs = settings.(*Setting)
 	} else {
 		err := db.First(&stngs).Error
 		if err != nil {
 			return u.Message(false, err.Error())
 		}
-		config.DBCache.Set(settingsCacheKey, stngs, cache.DefaultExpiration)
+		config.DBCache.Set(SettingsCacheKey, stngs, cache.DefaultExpiration)
 	}
 
 	res := u.Message(true, "")
@@ -60,10 +62,22 @@ func (setting *Setting) Update() map[string]interface{} {
 		return u.Message(false, err.Error())
 	}
 
-	config.DBCache.Delete(settingsCacheKey)
+	config.DBCache.Delete(SettingsCacheKey)
 
 	res := u.Message(true, "")
 	res["data"] = setting
 
 	return res
+}
+
+// GetSettingsIntr is for using settings only in backend
+func (setting *Setting) AppGetSettings() *Setting {
+	settings := Setting{}
+
+	err := config.GetDB().First(&settings).Error
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	return &settings
 }

@@ -13,7 +13,7 @@ type Expense struct {
 	Reference string   `gorm:"not null" json:"reference"`
 	Date      string   `gorm:"not null" json:"date"`
 	Name      string   `gorm:"not null" json:"name"`
-	Amount    float32  `gorm:"not null;type:numeric(7,2);default:0;" json:"amount"`
+	Amount    float32  `gorm:"not null;type:numeric(12,2);default:0;" json:"amount"`
 	PurposeID *uint    `gorm:"" json:"purpose_id"`
 	Purpose   *Purpose `gorm:"foreignKey:PurposeID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"purpose,omitempty"`
 	Note      string   `gorm:"" json:"note"`

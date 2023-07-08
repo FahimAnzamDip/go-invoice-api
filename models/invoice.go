@@ -3,7 +3,6 @@ package models
 import (
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/fahimanzamdip/go-invoice-api/services"
@@ -22,11 +21,11 @@ type Invoice struct {
 	Recurring       bool              `gorm:"not null;default:0;" json:"recurring"`
 	RecurringCycle  string            `gorm:"" json:"recurring_cycle"`
 	DiscountType    string            `gorm:"" json:"discount_type"`
-	DiscountAmount  float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"discount_amount"`
-	TotalAmount     float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"total_amount"`
-	PaidAmount      float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"paid_amount"`
-	DueAmount       float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"due_amount"`
-	TaxAmount       float32           `gorm:"type:numeric(7,2);not null;default:0;" json:"tax_amount"`
+	DiscountAmount  float32           `gorm:"type:numeric(12,2);not null;default:0;" json:"discount_amount"`
+	TotalAmount     float32           `gorm:"type:numeric(12,2);not null;default:0;" json:"total_amount"`
+	PaidAmount      float32           `gorm:"type:numeric(12,2);not null;default:0;" json:"paid_amount"`
+	DueAmount       float32           `gorm:"type:numeric(12,2);not null;default:0;" json:"due_amount"`
+	TaxAmount       float32           `gorm:"type:numeric(12,2);not null;default:0;" json:"tax_amount"`
 	Terms           string            `gorm:"type:text;" json:"terms"`
 	InvoiceProducts []*InvoiceProduct `gorm:"foreignKey:InvoiceID;" json:"invoice_products,omitempty"`
 	PaymentMethod   string            `gorm:"-" json:"payment_method,omitempty"`
@@ -127,22 +126,9 @@ func (invoice *Invoice) Store() map[string]interface{} {
 		return u.Message(false, err.Error())
 	}
 
-	err = db.Preload("Client.User").Preload("InvoiceProducts.Tax").
-		Preload("Payments").Where("id = ?", invoice.ID).First(&invoice).Error
+	err = invoice.generatePDF()
 	if err != nil {
 		return u.Message(false, err.Error())
-	}
-
-	pdfData := struct {
-		Invoice   *Invoice
-		Reference string
-	}{
-		Invoice:   invoice,
-		Reference: invoice.Reference,
-	}
-	_, err = services.NewPDFService().GenerateInvoicePDF(pdfData)
-	if err != nil {
-		log.Println(err.Error())
 	}
 
 	res := u.Message(true, "Invoice created successfully")
@@ -244,4 +230,26 @@ func (invoice *Invoice) exists(id uint) (*Invoice, error) {
 	}
 
 	return inv, nil
+}
+
+func (invoice *Invoice) generatePDF() error {
+	err := db.Preload("Client.User").Preload("InvoiceProducts.Tax").
+		Preload("Payments").Where("id = ?", invoice.ID).First(&invoice).Error
+	if err != nil {
+		return err
+	}
+
+	pdfData := struct {
+		Invoice *Invoice
+		Setting *Setting
+	}{
+		Invoice: invoice,
+		Setting: (&Setting{}).AppGetSettings(),
+	}
+	err = services.NewPDFService().GenerateInvoicePDF(pdfData)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

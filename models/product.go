@@ -12,7 +12,7 @@ type Product struct {
 	Name        string    `gorm:"not null;" json:"name"`
 	Code        string    `gorm:"" json:"code"`
 	Description string    `json:"description"`
-	Price       float32   `gorm:"type:numeric(7,2);not null;" json:"price"`
+	Price       float32   `gorm:"type:numeric(12,2);not null;" json:"price"`
 	CategoryID  *uint     `json:"category_id"`
 	Category    *Category `gorm:"foreignKey:CategoryID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" json:"category"`
 	ImagePath   string    `json:"image_url"`

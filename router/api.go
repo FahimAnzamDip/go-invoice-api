@@ -40,6 +40,7 @@ func Configure() *chi.Mux {
 		// If registration is needed uncomment below route
 		// ar.Post("/auth/register", handlers.StoreUserHandler)
 		ar.Post("/auth/login", handlers.LoginHandler)
+		ar.Get("/settings/data", handlers.SettingsDataHandler)
 	})
 
 	// Auth routes
@@ -126,7 +127,6 @@ func Configure() *chi.Mux {
 		ar.Delete("/expenses/{id}", handlers.DestroyExpenseHandler)
 
 		// Settings routes
-		ar.Get("/settings/data", handlers.SettingsDataHandler)
 		ar.Get("/settings", handlers.GetSettingsHandler)
 		ar.Put("/settings", handlers.UpdateSettingsHandler)
 	})
