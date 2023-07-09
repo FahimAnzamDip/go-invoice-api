@@ -28,7 +28,7 @@ func NewPDFService() *PDFService {
 	return &PDFService{}
 }
 
-func (p *PDFService) GenerateInvoicePDF(data interface{}) error {
+func (p *PDFService) GenerateInvoicePDF(data interface{}) (string, error) {
 	var err error
 
 	templ := template.New("invoice.html")
@@ -39,19 +39,19 @@ func (p *PDFService) GenerateInvoicePDF(data interface{}) error {
 	// use Go's default HTML template generation tools to generate your HTML
 	templ, err = templ.ParseFiles("./templates/pdf/invoice.html")
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// apply the parsed HTML template data and keep the result in a Buffer
 	var body bytes.Buffer
 	if err = templ.Execute(&body, data); err != nil {
-		return err
+		return "", err
 	}
 
 	// initalize a wkhtmltopdf generator
 	pdfg, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// read the HTML page as a PDF page
@@ -75,19 +75,20 @@ func (p *PDFService) GenerateInvoicePDF(data interface{}) error {
 	// creates the pdf ad keeps it in the buffer
 	err = pdfg.Create()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// It will make the file name with the invoice reference
-	err = pdfg.WriteFile(fmt.Sprintf("./public/pdfs/invoice-%s.pdf", strconv.Itoa(int(time.Now().Unix()))))
+	saveTo := fmt.Sprintf("./public/pdfs/invoice-%s.pdf", strconv.Itoa(int(time.Now().Unix())))
+	err = pdfg.WriteFile(saveTo)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	return nil
+	return saveTo, err
 }
 
-func (p *PDFService) GeneratePayReceiptPDF(data interface{}) error {
+func (p *PDFService) GeneratePayReceiptPDF(data interface{}) (string, error) {
 	var err error
 
 	templ := template.New("payment.html")
@@ -98,19 +99,19 @@ func (p *PDFService) GeneratePayReceiptPDF(data interface{}) error {
 	// use Go's default HTML template generation tools to generate your HTML
 	templ, err = templ.ParseFiles("./templates/pdf/payment.html")
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// apply the parsed HTML template data and keep the result in a Buffer
 	var body bytes.Buffer
 	if err = templ.Execute(&body, data); err != nil {
-		return err
+		return "", err
 	}
 
 	// initalize a wkhtmltopdf generator
 	pdfg, err := wkhtmltopdf.NewPDFGenerator()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// read the HTML page as a PDF page
@@ -134,14 +135,15 @@ func (p *PDFService) GeneratePayReceiptPDF(data interface{}) error {
 	// creates the pdf ad keeps it in the buffer
 	err = pdfg.Create()
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// It will make the file name with the invoice reference
-	err = pdfg.WriteFile(fmt.Sprintf("./public/pdfs/pay-receipt-%s.pdf", strconv.Itoa(int(time.Now().Unix()))))
+	saveTo := fmt.Sprintf("./public/pdfs/pay-receipt-%s.pdf", strconv.Itoa(int(time.Now().Unix())))
+	err = pdfg.WriteFile(saveTo)
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	return nil
+	return saveTo, err
 }

@@ -39,6 +39,13 @@ func StorePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := payment.Store()
+	// generate pdf
+	_, err = payment.GeneratePDF()
+	if err != nil {
+		u.Respond(w, u.Message(false, err.Error()))
+	}
+	// todo: send email to client with attachment
+
 	u.Respond(w, res)
 }
 

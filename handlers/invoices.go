@@ -29,6 +29,13 @@ func StoreInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := invoice.Store()
+	// generate pdf
+	_, err = invoice.GeneratePDF()
+	if err != nil {
+		u.Respond(w, u.Message(false, err.Error()))
+	}
+	// todo: send email to client with attachment
+
 	u.Respond(w, res)
 }
 

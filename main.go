@@ -16,6 +16,25 @@ func init() {
 		return
 	}
 	log.Println("Reading .env file successful || Alhamdulillaah")
+
+	directoryPaths := []string{"./public/uploads", "./public/pdfs"}
+
+	for _, directoryPath := range directoryPaths {
+		_, err := os.Stat(directoryPath)
+		if os.IsNotExist(err) {
+			err = os.MkdirAll(directoryPath, os.ModePerm)
+			if err != nil {
+				log.Println("Error creating directory:", err)
+				return
+			}
+			log.Println("Directory created:", directoryPath)
+		} else if err != nil {
+			log.Println("Error checking directory:", err)
+			return
+		} else {
+			log.Println("Directory exists:", directoryPath)
+		}
+	}
 }
 
 func main() {

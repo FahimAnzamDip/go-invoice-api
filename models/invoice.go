@@ -126,11 +126,6 @@ func (invoice *Invoice) Store() map[string]interface{} {
 		return u.Message(false, err.Error())
 	}
 
-	err = invoice.generatePDF()
-	if err != nil {
-		return u.Message(false, err.Error())
-	}
-
 	res := u.Message(true, "Invoice created successfully")
 	res["data"] = invoice
 
@@ -232,11 +227,11 @@ func (invoice *Invoice) exists(id uint) (*Invoice, error) {
 	return inv, nil
 }
 
-func (invoice *Invoice) generatePDF() error {
+func (invoice *Invoice) GeneratePDF() (string, error) {
 	err := db.Preload("Client.User").Preload("InvoiceProducts.Tax").
 		Preload("Payments").Where("id = ?", invoice.ID).First(&invoice).Error
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	pdfData := struct {
@@ -248,10 +243,10 @@ func (invoice *Invoice) generatePDF() error {
 		Setting:     (&Setting{}).AppGetSettings(),
 		CurrentYear: time.Now().Format("2006"),
 	}
-	err = services.NewPDFService().GenerateInvoicePDF(pdfData)
+	path, err := services.NewPDFService().GenerateInvoicePDF(pdfData)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return path, nil
 }

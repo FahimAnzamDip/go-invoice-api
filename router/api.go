@@ -1,11 +1,13 @@
 package router
 
 import (
+	"log"
 	"net/http"
 	"os"
 
 	"github.com/fahimanzamdip/go-invoice-api/handlers"
 	"github.com/fahimanzamdip/go-invoice-api/middlewares"
+	"github.com/fahimanzamdip/go-invoice-api/services"
 	"github.com/fahimanzamdip/go-invoice-api/utils"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -129,6 +131,24 @@ func Configure() *chi.Mux {
 		// Settings routes
 		ar.Get("/settings", handlers.GetSettingsHandler)
 		ar.Put("/settings", handlers.UpdateSettingsHandler)
+
+		// Test mail
+		ar.Get("/test-mail", func(w http.ResponseWriter, r *http.Request) {
+			err := services.NewMailService().SendEmail("goinvoicer@mail.com", []string{"fahimanzam9@gmail.com"}, "Payment Received. GoInvoicer", "payment-mail.html", "", struct {
+				Reference string
+				Amount    float32
+			}{
+				Reference: "#PAY-00012",
+				Amount:    1050,
+			})
+			if err != nil {
+				log.Println(err.Error())
+				utils.Respond(w, utils.Message(false, "Can not send email!"))
+				return
+			}
+
+			utils.Respond(w, utils.Message(true, "Email sent!"))
+		})
 	})
 
 	// Mount to main router

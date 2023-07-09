@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email</title>
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <h3>Thanks for your payment, We received amount: {{ Price .Amount }}</h3>
+    <p>Your payment reference: {{ .Reference }}</p>
+    <p>Please review the attached receipt below.</p>
+</body>
+</html>

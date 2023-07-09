@@ -87,11 +87,6 @@ func (payment *Payment) Store() map[string]interface{} {
 		return u.Message(false, err.Error())
 	}
 
-	err = payment.generatePDF()
-	if err != nil {
-		return u.Message(false, err.Error())
-	}
-
 	res := u.Message(true, "Payment created successfully")
 	res["data"] = payment
 
@@ -216,10 +211,10 @@ func adjustInvoice(inv *Invoice, pay *Payment, action string) (*Invoice, error) 
 	return inv, nil
 }
 
-func (payment *Payment) generatePDF() error {
+func (payment *Payment) GeneratePDF() (string, error) {
 	err := db.Preload("Invoice.Client.User").Where("id = ?", payment.ID).First(&payment).Error
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	pdfData := struct {
@@ -231,10 +226,10 @@ func (payment *Payment) generatePDF() error {
 		Setting:     (&Setting{}).AppGetSettings(),
 		CurrentYear: time.Now().Format("2006"),
 	}
-	err = services.NewPDFService().GeneratePayReceiptPDF(pdfData)
+	path, err := services.NewPDFService().GeneratePayReceiptPDF(pdfData)
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return path, nil
 }
