@@ -9,8 +9,8 @@
 - **Expense Management**
     - Add all types of expenses to the app and track your expense details.
 
-- **Invoicing (Notifications Pending)**
-    - Creating invoices/Generating Bills and sending via email. Give reminders daily if the bills are pending. You can use the app for making payment against the generated invoices
+- **Invoicing (Mail Pending)**
+    - Creating invoices/Generating Bills and send to client via email. You can use the app for making payment against the generated invoices
 
 - **Recurring Invoicing (Pending)**
     - Generate and Autosend the recurred invoice to the client (Monthly/Quarterly/Semi-Annually/Annually)

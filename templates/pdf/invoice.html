@@ -15,9 +15,9 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-xs-12">
-                <div style="text-align: center;margin-bottom: 25px;">
-                    <img width="180" src="" alt="Logo">
-                    <h4 style="margin-bottom: 20px;">
+                <div style="text-align: center;margin-bottom: 50px;">
+                    <h3 style="margin-bottom: 20px;font-style: italic;">{{ .Setting.CompanyName }}</h3>
+                    <h4 style="margin-bottom: 20px;margin-top: 20px;">
                         <span>Reference::</span> <strong>{{ .Invoice.Reference }}</strong>
                     </h4>
                 </div>
@@ -44,7 +44,7 @@
                                 <h4 class="mb-2" style="border-bottom: 1px solid #dddddd;padding-bottom: 10px;">Invoice
                                     Info:</h4>
                                 <div>Invoice: <strong>{{ .Invoice.Reference }}</strong></div>
-                                <div>Date: {{ .Invoice.IssueDate }}</div>
+                                <div>Date: {{ Date .Invoice.IssueDate }}</div>
                                 <div>
                                     Status: <strong>{{ .Invoice.Status }}</strong>
                                 </div>
@@ -122,7 +122,7 @@
                         </div>
                         <div class="row" style="margin-top: 25px;">
                             <div class="col-xs-12">
-                                <p style="font-style: italic;text-align: center">Auto Generated Invoice. {{ .Setting.CompanyName }} &copy; 2023</p>
+                                <p style="font-style: italic;text-align: center">Auto Generated Invoice. {{ .Setting.CompanyName }} &copy; {{ .CurrentYear }}</p>
                             </div>
                         </div>
                     </div>

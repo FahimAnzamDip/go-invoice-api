@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/fahimanzamdip/go-invoice-api/config"
 	"github.com/leekchan/accounting"
@@ -61,6 +62,39 @@ func FormatPrice(value float32) string {
 	return formattedValue
 }
 
-func FormatDate() {
+func FormatToDate(date string) string {
+	settings := DateSetting{}
+	err := config.GetDB().Table("settings").First(&settings).Error
+	if err != nil {
+		log.Println(err.Error())
+	}
 
+	parsedDate, err := time.Parse("2006-01-02T15:04:05-07:00", date)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	switch settings.DateFormat {
+	case "d-m-Y":
+		return parsedDate.Format("02-01-2006")
+	case "m-d-Y":
+		return parsedDate.Format("01-02-2006")
+	case "Y-m-d":
+		return parsedDate.Format("2006-01-02")
+	case "m/d/Y":
+		return parsedDate.Format("01/02/2006")
+	case "d/m/Y":
+		return parsedDate.Format("02/01/2006")
+	case "Y/m/d":
+		return parsedDate.Format("2006/01/02")
+	case "m.d.Y":
+		return parsedDate.Format("01.02.2006")
+	case "d.m.Y":
+		return parsedDate.Format("02.01.2006")
+	case "Y.m.d":
+		return parsedDate.Format("2006.01.02")
+	default:
+		log.Println("Unknown date format:", settings.DateFormat)
+		return parsedDate.Format("2006-01-02")
+	}
 }

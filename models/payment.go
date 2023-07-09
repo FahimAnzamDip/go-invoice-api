@@ -3,7 +3,9 @@ package models
 import (
 	"errors"
 	"fmt"
+	"time"
 
+	"github.com/fahimanzamdip/go-invoice-api/services"
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
 	"gorm.io/gorm"
 )
@@ -12,7 +14,7 @@ type Payment struct {
 	gorm.Model
 	Reference     string   `gorm:"not null" json:"reference"`
 	InvoiceID     uint     `gorm:"not null" json:"invoice_id"`
-	Invoice       *Invoice `gorm:"foreignKey:InvoiceID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"-"`
+	Invoice       *Invoice `gorm:"foreignKey:InvoiceID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;" json:"invoice,omitempty"`
 	ReceivedOn    string   `gorm:"not null;type:date;" json:"received_on"`
 	Amount        float32  `gorm:"type:numeric(12,2);not null;default:0;" json:"amount"`
 	PaymentMethod string   `gorm:"not null;" json:"payment_method"`
@@ -81,6 +83,11 @@ func (payment *Payment) Store() map[string]interface{} {
 	}
 
 	err = db.Create(&payment).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	err = payment.generatePDF()
 	if err != nil {
 		return u.Message(false, err.Error())
 	}
@@ -207,4 +214,27 @@ func adjustInvoice(inv *Invoice, pay *Payment, action string) (*Invoice, error) 
 	}
 
 	return inv, nil
+}
+
+func (payment *Payment) generatePDF() error {
+	err := db.Preload("Invoice.Client.User").Where("id = ?", payment.ID).First(&payment).Error
+	if err != nil {
+		return err
+	}
+
+	pdfData := struct {
+		Payment     *Payment
+		Setting     *Setting
+		CurrentYear string
+	}{
+		Payment:     payment,
+		Setting:     (&Setting{}).AppGetSettings(),
+		CurrentYear: time.Now().Format("2006"),
+	}
+	err = services.NewPDFService().GeneratePayReceiptPDF(pdfData)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -240,11 +240,13 @@ func (invoice *Invoice) generatePDF() error {
 	}
 
 	pdfData := struct {
-		Invoice *Invoice
-		Setting *Setting
+		Invoice     *Invoice
+		Setting     *Setting
+		CurrentYear string
 	}{
-		Invoice: invoice,
-		Setting: (&Setting{}).AppGetSettings(),
+		Invoice:     invoice,
+		Setting:     (&Setting{}).AppGetSettings(),
+		CurrentYear: time.Now().Format("2006"),
 	}
 	err = services.NewPDFService().GenerateInvoicePDF(pdfData)
 	if err != nil {
