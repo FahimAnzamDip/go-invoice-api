@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"encoding/json"
-	"io/ioutil"
 	"net/http"
+	"os"
 
 	"github.com/fahimanzamdip/go-invoice-api/models"
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
@@ -11,9 +11,26 @@ import (
 
 func SettingsDataHandler(w http.ResponseWriter, r *http.Request) {
 	filePath := "./data/settings.json"
-	fileContent, err := ioutil.ReadFile(filePath)
+	file, err := os.Open(filePath)
 	if err != nil {
 		u.Respond(w, u.Message(false, err.Error()))
+		return
+	}
+	defer file.Close()
+
+	fileInfo, err := file.Stat()
+	if err != nil {
+		u.Respond(w, u.Message(false, err.Error()))
+		return
+	}
+
+	fileSize := fileInfo.Size()
+	fileContent := make([]byte, fileSize)
+
+	_, err = file.Read(fileContent)
+	if err != nil {
+		u.Respond(w, u.Message(false, err.Error()))
+		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
