@@ -9,7 +9,7 @@
 - **Expense Management**
     - Add all types of expenses to the app and track your expense details.
 
-- **Invoicing (Mail Pending)**
+- **Invoicing**
     - Creating invoices/Generating Bills and send to client via email. You can use the app for making payment against the generated invoices
 
 - **Recurring Invoicing (Pending)**
@@ -18,5 +18,5 @@
 - **Product Management**
     - You are able to add Products/Services according to their category.
 
-- **Reports (Pending)**
+- **Reports**
     - See different reports to learn about client and their payment status at a glance

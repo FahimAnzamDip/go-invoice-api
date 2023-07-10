@@ -37,8 +37,6 @@ func Configure() *chi.Mux {
 
 	// Public routes
 	ar.Group(func(ar chi.Router) {
-		// If registration is needed uncomment below route
-		// ar.Post("/auth/register", handlers.StoreUserHandler)
 		ar.Post("/auth/login", handlers.LoginHandler)
 		ar.Get("/settings/data", handlers.SettingsDataHandler)
 	})
@@ -125,6 +123,12 @@ func Configure() *chi.Mux {
 		ar.Post("/expenses", handlers.StoreExpenseHandler)
 		ar.Put("/expenses/{id}", handlers.UpdateExpenseHandler)
 		ar.Delete("/expenses/{id}", handlers.DestroyExpenseHandler)
+
+		// Report routes
+		ar.Get("/reports/payment-summary", handlers.PaymentReportHandler)
+		ar.Get("/reports/invoice-summary", handlers.InvoiceReportHandler)
+		ar.Get("/reports/expense-summary", handlers.ExpenseReportHandler)
+		ar.Get("/reports/client-statement", handlers.ClientStatementReportHandler)
 
 		// Settings routes
 		ar.Get("/settings", handlers.GetSettingsHandler)
