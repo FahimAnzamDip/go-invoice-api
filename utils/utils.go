@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/fahimanzamdip/go-invoice-api/config"
@@ -96,5 +97,12 @@ func FormatToDate(date string) string {
 	default:
 		log.Println("Unknown date format:", settings.DateFormat)
 		return parsedDate.Format("2006-01-02")
+	}
+}
+
+func RemoveFile(path string) {
+	err := os.Remove(path)
+	if err != nil {
+		log.Println(err.Error())
 	}
 }

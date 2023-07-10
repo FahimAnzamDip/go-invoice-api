@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/fahimanzamdip/go-invoice-api/models"
+	"github.com/fahimanzamdip/go-invoice-api/services"
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
 	"github.com/go-chi/chi/v5"
 )
@@ -29,12 +30,22 @@ func StoreInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := invoice.Store()
-	// generate pdf
-	_, err = invoice.GeneratePDF()
+	// generate pdf and get the attachment
+	attachment, err := invoice.GeneratePDF()
 	if err != nil {
 		u.Respond(w, u.Message(false, err.Error()))
 	}
-	// todo: send email to client with attachment
+	// send email to client with attachment
+	err = services.NewMailService().SendEmail([]string{"fahimanzam9@gmail.com"}, "Invoice From GoInvoicer",
+		"invoice-mail.html",
+		attachment, "")
+	if err != nil {
+		log.Println(err.Error())
+		u.Respond(w, u.Message(false, "Invoice created. But can not send email!"))
+		return
+	} else {
+		u.RemoveFile(attachment)
+	}
 
 	u.Respond(w, res)
 }

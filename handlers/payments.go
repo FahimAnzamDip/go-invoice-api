@@ -3,10 +3,12 @@ package handlers
 import (
 	"encoding/json"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/fahimanzamdip/go-invoice-api/models"
+	"github.com/fahimanzamdip/go-invoice-api/services"
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
 	"github.com/go-chi/chi/v5"
 )
@@ -39,12 +41,29 @@ func StorePaymentHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := payment.Store()
-	// generate pdf
-	_, err = payment.GeneratePDF()
+	// generate pdf and get the attachment
+	attachment, err := payment.GeneratePDF()
 	if err != nil {
 		u.Respond(w, u.Message(false, err.Error()))
 	}
-	// todo: send email to client with attachment
+	// send email to client with the attachment
+	err = services.NewMailService().SendEmail([]string{"fahimanzam9@gmail.com"}, "Payment Received. GoInvoicer",
+		"payment-mail.html",
+		attachment,
+		struct {
+			Reference string
+			Amount    float32
+		}{
+			Reference: payment.Reference,
+			Amount:    payment.Amount,
+		})
+	if err != nil {
+		log.Println(err.Error())
+		u.Respond(w, u.Message(false, "Payment created. But can not send email!"))
+		return
+	} else {
+		u.RemoveFile(attachment)
+	}
 
 	u.Respond(w, res)
 }

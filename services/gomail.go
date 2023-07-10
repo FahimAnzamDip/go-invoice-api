@@ -40,7 +40,7 @@ func NewMailService() *MailService {
 	}
 }
 
-func (mail *MailService) SendEmail(from string, to []string, subject string, templateName string, attachmentPath string, data interface{}) error {
+func (mail *MailService) SendEmail(to []string, subject string, templateName string, attachmentPath string, data interface{}) error {
 	var err error
 
 	templ := template.New(templateName)
@@ -58,7 +58,7 @@ func (mail *MailService) SendEmail(from string, to []string, subject string, tem
 	}
 
 	m := gomail.NewMessage()
-	m.SetHeader("From", from)
+	m.SetHeader("From", os.Getenv("mail_from_address"))
 	m.SetHeader("To", to...)
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", body.String())
