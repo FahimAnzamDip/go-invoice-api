@@ -29,7 +29,7 @@ type Invoice struct {
 	Terms           string            `gorm:"type:text;" json:"terms"`
 	InvoiceProducts []*InvoiceProduct `gorm:"foreignKey:InvoiceID;" json:"invoice_products,omitempty"`
 	PaymentMethod   string            `gorm:"-" json:"payment_method,omitempty"`
-	Note            string            `gorm:"-" json:"note,omitempty"`
+	Note            string            `gorm:"-" json:"note"`
 	Payments        []*Payment        `gorm:"foreignKey:InvoiceID;" json:"payments,omitempty"`
 }
 

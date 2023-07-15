@@ -113,6 +113,14 @@ func Configure() *chi.Mux {
 		ar.Put("/payments/{id}", handlers.UpdatePaymentHandler)
 		ar.Delete("/payments/{id}", handlers.DestroyPaymentHandler)
 
+		// Estimate routes
+		ar.Post("/estimates/{id}/send", handlers.SendEstimateHandler)
+		ar.Get("/estimates", handlers.IndexEstimateHandler)
+		ar.Post("/estimates", handlers.StoreEstimateHandler)
+		ar.Get("/estimates/{id}", handlers.ShowEstimateHandler)
+		ar.Put("/estimates/{id}", handlers.UpdateEstimateHandler)
+		ar.Delete("/estimates/{id}", handlers.DestroyEstimateHandler)
+
 		// Purposes routes
 		ar.Get("/purposes", handlers.IndexPurposeHandler)
 		ar.Post("/purposes", handlers.StorePurposeHandler)
