@@ -10,6 +10,16 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+func SearchProductHandler(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	term := params.Get("term")
+
+	product := &models.Product{}
+
+	data := product.Search(term)
+	u.Respond(w, data)
+}
+
 func IndexProductHandler(w http.ResponseWriter, r *http.Request) {
 	product := &models.Product{}
 

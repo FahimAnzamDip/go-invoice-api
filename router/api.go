@@ -79,6 +79,7 @@ func Configure() *chi.Mux {
 		ar.Delete("/uploads", handlers.DeleteFileHandler)
 
 		// Products routes
+		ar.Get("/products/search", handlers.SearchProductHandler)
 		ar.Get("/products", handlers.IndexProductHandler)
 		ar.Post("/products", handlers.StoreProductHandler)
 		ar.Get("/products/{id}", handlers.ShowProductHandler)

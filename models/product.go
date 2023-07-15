@@ -33,6 +33,24 @@ func (product *Product) validate() (map[string]interface{}, bool) {
 	return u.Message(true, "success"), true
 }
 
+// Search functions returns similar entries with the query string
+func (product *Product) Search(term string) map[string]interface{} {
+	products := []Product{}
+
+	err := db.Preload("Category").
+		Joins("JOIN categories ON categories.id = products.category_id").
+		Where("products.name LIKE ? OR products.code LIKE ? OR categories.name LIKE ?", "%"+term+"%", "%"+term+"%", "%"+term+"%").
+		Limit(5).Find(&products).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	res := u.Message(true, "")
+	res["data"] = products
+
+	return res
+}
+
 // Index function returns all entries
 func (product *Product) Index() map[string]interface{} {
 	products := []Product{}
