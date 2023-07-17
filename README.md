@@ -1,5 +1,5 @@
 # GoInvoicer
-> Tried to keep the project as simple as possible didn't use any fancy pattern or any framework. You can Implement the frontend as you like with the help of the docs below. Please create a issue if you find any kind of problem or if you want to contribute in this project. I will try to implement a frontend soon with vue.js. \n Thank You...
+> Tried to keep the project as simple as possible didn't use any fancy pattern or any framework. You can Implement the frontend as you like with the help of the docs below. Please create a issue if you find any kind of problem or if you want to contribute in this project. I will try to implement a frontend soon with vue.js.
 
 > ### [API Documentation](https://documenter.getpostman.com/view/28287667/2s946bBus4) (Postman)
 
