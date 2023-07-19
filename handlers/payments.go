@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -61,13 +60,6 @@ func StorePaymentHandler(w http.ResponseWriter, r *http.Request) {
 
 	res := payment.Store()
 
-	data, ok := res["data"].(*models.Payment)
-	if !ok {
-		u.Respond(w, u.Message(false, err.Error()))
-		return
-	}
-	fmt.Println(data.Invoice.Client.User.Email)
-
 	attchChan := make(chan string)
 	var wg sync.WaitGroup
 	wg.Add(2)
@@ -88,16 +80,17 @@ func StorePaymentHandler(w http.ResponseWriter, r *http.Request) {
 		defer wg.Done()
 		attachment := <-attchChan
 		// send email to client with the attachment
-		err = services.NewMailService().SendEmail([]string{"fahimanzam9@gmail.com"}, "Payment Received. GoInvoicer",
-			"payment-mail.html",
-			attachment,
-			struct {
-				Reference string
-				Amount    float32
-			}{
-				Reference: payment.Reference,
-				Amount:    payment.Amount,
-			})
+		err = services.NewMailService().
+			SendEmail([]string{payment.Invoice.Client.User.Email}, "Payment Received. GoInvoicer",
+				"payment-mail.html",
+				attachment,
+				struct {
+					Reference string
+					Amount    float32
+				}{
+					Reference: payment.Reference,
+					Amount:    payment.Amount,
+				})
 		if err != nil {
 			log.Println(err.Error())
 			u.Respond(w, u.Message(false, "Payment created. But can not send email!"))

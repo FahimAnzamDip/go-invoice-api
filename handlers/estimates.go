@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"sync"
 
 	"github.com/fahimanzamdip/go-invoice-api/config"
 	"github.com/fahimanzamdip/go-invoice-api/models"
@@ -29,28 +30,44 @@ func SendEstimateHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// generate pdf and get the attachment
-	attachment, err := estimate.GeneratePDF()
-	if err != nil {
-		u.Respond(w, u.Message(false, err.Error()))
-		return
-	}
-	// send email to client with attachment
-	err = services.NewMailService().SendEmail([]string{estimate.Client.User.Email}, "Estimate From GoInvoicer",
-		"estimate-mail.html",
-		attachment, "")
-	if err != nil {
-		log.Println(err.Error())
-		u.Respond(w, u.Message(false, "Estimate created. But can not send email!"))
-		return
-	} else {
-		u.RemoveFile(attachment)
-		err = config.GetDB().Model(&estimate).Where("id = ?", ID).Update("status", "Sent").Error
+	attchChan := make(chan string)
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		// generate pdf and get the attachment
+		attachment, err := estimate.GeneratePDF()
 		if err != nil {
+			log.Println(err.Error())
 			u.Respond(w, u.Message(false, err.Error()))
 			return
 		}
-	}
+		attchChan <- attachment
+	}()
+
+	go func() {
+		defer wg.Done()
+		attachment := <-attchChan
+		// send email to client with attachment
+		err = services.NewMailService().SendEmail([]string{estimate.Client.User.Email}, "Estimate From GoInvoicer",
+			"estimate-mail.html",
+			attachment, "")
+		if err != nil {
+			log.Println(err.Error())
+			u.Respond(w, u.Message(false, "Estimate created. But can not send email!"))
+			return
+		} else {
+			u.RemoveFile(attachment)
+			err = config.GetDB().Model(&estimate).Where("id = ?", ID).Update("status", "Sent").Error
+			if err != nil {
+				u.Respond(w, u.Message(false, err.Error()))
+				return
+			}
+		}
+	}()
+
+	wg.Wait()
 
 	u.Respond(w, u.Message(true, "Estimate sent to client successfully"))
 }

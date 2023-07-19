@@ -52,7 +52,7 @@ func StoreInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 		defer wg.Done()
 		attachment := <-attchChan
 		// send email to client with attachment
-		err = services.NewMailService().SendEmail([]string{"fahimanzam9@gmail.com"}, "Invoice From GoInvoicer",
+		err = services.NewMailService().SendEmail([]string{invoice.Client.User.Email}, "Invoice From GoInvoicer",
 			"invoice-mail.html",
 			attachment, "")
 		if err != nil {
