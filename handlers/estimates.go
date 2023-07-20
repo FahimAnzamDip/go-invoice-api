@@ -55,7 +55,7 @@ func SendEstimateHandler(w http.ResponseWriter, r *http.Request) {
 			attachment, "")
 		if err != nil {
 			log.Println(err.Error())
-			u.Respond(w, u.Message(false, "Estimate created. But can not send email!"))
+			u.Respond(w, u.Message(false, err.Error()))
 			return
 		} else {
 			u.RemoveFile(attachment)

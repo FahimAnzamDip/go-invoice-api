@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"sync"
 
@@ -12,6 +13,34 @@ import (
 	u "github.com/fahimanzamdip/go-invoice-api/utils"
 	"github.com/go-chi/chi/v5"
 )
+
+func RecurringCyclesHandler(w http.ResponseWriter, r *http.Request) {
+	filePath := "./data/recurring_cycles.json"
+	file, err := os.Open(filePath)
+	if err != nil {
+		u.Respond(w, u.Message(false, err.Error()))
+		return
+	}
+	defer file.Close()
+
+	fileInfo, err := file.Stat()
+	if err != nil {
+		u.Respond(w, u.Message(false, err.Error()))
+		return
+	}
+
+	fileSize := fileInfo.Size()
+	fileContent := make([]byte, fileSize)
+
+	_, err = file.Read(fileContent)
+	if err != nil {
+		u.Respond(w, u.Message(false, err.Error()))
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(fileContent)
+}
 
 func IndexInvoiceHandler(w http.ResponseWriter, r *http.Request) {
 	invoice := &models.Invoice{}

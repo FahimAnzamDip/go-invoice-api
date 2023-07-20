@@ -100,6 +100,7 @@ func Configure() *chi.Mux {
 		ar.Delete("/taxes/{id}", handlers.DestroyTaxHandler)
 
 		// Invoices routes
+		ar.Get("/invoices/recurring-cycles", handlers.RecurringCyclesHandler)
 		ar.Get("/invoices", handlers.IndexInvoiceHandler)
 		ar.Post("/invoices", handlers.StoreInvoiceHandler)
 		ar.Get("/invoices/{id}", handlers.ShowInvoiceHandler)
@@ -112,6 +113,9 @@ func Configure() *chi.Mux {
 		ar.Post("/payments", handlers.StorePaymentHandler)
 		ar.Put("/payments/{id}", handlers.UpdatePaymentHandler)
 		ar.Delete("/payments/{id}", handlers.DestroyPaymentHandler)
+
+		// Recurring invoices routes
+		ar.Get("/recurring-invoices", handlers.IndexRecurringInvoiceHandler)
 
 		// Estimate routes
 		ar.Post("/estimates/{id}/send", handlers.SendEstimateHandler)

@@ -42,6 +42,7 @@ func migrate() error {
 		&Invoice{},
 		&Tax{},
 		&InvoiceProduct{},
+		&InvoiceRecurring{},
 		&Estimate{},
 		&EstimateProduct{},
 		&Payment{},
