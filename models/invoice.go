@@ -18,7 +18,7 @@ type Invoice struct {
 	Status          string            `gorm:"" json:"status"`
 	IssueDate       string            `gorm:"type:date;" json:"issue_date"`
 	DueDate         string            `gorm:"type:date;" json:"due_date"`
-	Recurring       bool              `gorm:"not null;default:0;" json:"recurring"`
+	Recurring       int8              `gorm:"not null;default:0;" json:"recurring"`
 	RecurringCycle  string            `gorm:"" json:"recurring_cycle"`
 	DiscountType    string            `gorm:"" json:"discount_type"`
 	DiscountAmount  float32           `gorm:"type:numeric(12,2);not null;default:0;" json:"discount_amount"`
