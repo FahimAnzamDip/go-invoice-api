@@ -1,5 +1,6 @@
 # GoInvoicer
 > Tried to keep the project as simple as possible didn't use any fancy pattern or any framework. You can Implement the frontend as you like with the help of the docs below. Please create a issue if you find any kind of problem or if you want to contribute in this project. I will try to implement a frontend soon with vue.js.
+> NOTE: It uses wkhtmltopdf for pdf generation. The app includes both binaries (Windows/Linux) for wkhtmltopdf in ./bin folder. Keep this in mind for your deployment strategy.
 
 > ### [API Documentation](https://documenter.getpostman.com/view/28287667/2s946bBus4) (Postman)
 
