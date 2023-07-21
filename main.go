@@ -46,5 +46,6 @@ func main() {
 	}
 
 	log.Println("API URL: http://localhost/" + os.Getenv("api_uri"))
+	log.Println("<===========================================>")
 	log.Fatal(http.ListenAndServe(":"+port, r))
 }

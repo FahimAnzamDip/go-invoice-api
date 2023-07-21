@@ -3,7 +3,14 @@
 
 > ### [API Documentation](https://documenter.getpostman.com/view/28287667/2s946bBus4) (Postman)
 
-### Achiveable with this API
+## Local Installation
+- `` git clone https://github.com/FahimAnzamDip/GoInvoicer.git ``
+- `` cd to/project/path ``
+- `` copy .env.example to .env ``
+- `` go mod tidy ``
+- `` go run main.go ``
+
+## Achiveable with this API
 
 - **Informative dashboard**
     - Displays the Summary of all information in one singular view.
@@ -17,7 +24,7 @@
 - **Invoicing**
     - Creating invoices/Generating Bills and send to client via email. You can use the app for making payment against the generated invoices.
 
-- **Recurring Invoicing (Pending)**
+- **Recurring Invoicing**
     - Generate and Autosend the recurred invoice to the client (Monthly/Quarterly/Semi-Annually/Annually).
 
 - **Estimates**

@@ -43,9 +43,12 @@ func RecurringCyclesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func IndexInvoiceHandler(w http.ResponseWriter, r *http.Request) {
+	params := r.URL.Query()
+	invType := params.Get("invoice_type")
+
 	invoice := &models.Invoice{}
 
-	data := invoice.Index()
+	data := invoice.Index(invType)
 	u.Respond(w, data)
 }
 

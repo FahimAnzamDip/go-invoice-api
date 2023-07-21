@@ -37,8 +37,6 @@ func Connect() {
 		panic("Unsupported database driver! Please check you .env file.")
 	}
 
-	log.Println(dsn)
-
 	d, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		panic(err)

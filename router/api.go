@@ -8,13 +8,11 @@ import (
 	"github.com/fahimanzamdip/go-invoice-api/middlewares"
 	"github.com/fahimanzamdip/go-invoice-api/utils"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 )
 
 func Configure() *chi.Mux {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
 	r.Use(cors.Handler(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -101,6 +99,7 @@ func Configure() *chi.Mux {
 
 		// Invoices routes
 		ar.Get("/invoices/recurring-cycles", handlers.RecurringCyclesHandler)
+		ar.Get("/invoices/recurring", handlers.IndexInvoiceHandler)
 		ar.Get("/invoices", handlers.IndexInvoiceHandler)
 		ar.Post("/invoices", handlers.StoreInvoiceHandler)
 		ar.Get("/invoices/{id}", handlers.ShowInvoiceHandler)
@@ -115,7 +114,7 @@ func Configure() *chi.Mux {
 		ar.Delete("/payments/{id}", handlers.DestroyPaymentHandler)
 
 		// Recurring invoices routes
-		ar.Get("/recurring-invoices", handlers.IndexRecurringInvoiceHandler)
+		ar.Post("/generate-recurring-invoices", handlers.GenerateRecurringHandler)
 
 		// Estimate routes
 		ar.Post("/estimates/{id}/send", handlers.SendEstimateHandler)

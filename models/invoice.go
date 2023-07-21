@@ -68,9 +68,18 @@ func (invoice *Invoice) validate() (map[string]interface{}, bool) {
 }
 
 // Index function returns all entries
-func (invoice *Invoice) Index() map[string]interface{} {
+func (invoice *Invoice) Index(invType string) map[string]interface{} {
 	invoices := []Invoice{}
-	err := db.Preload("Client.User").Find(&invoices).Error
+
+	query := db.Model(&Invoice{})
+
+	if invType == "" {
+		query.Where("recurring != ?", 3)
+	} else {
+		query.Where("recurring = ?", 3)
+	}
+
+	err := query.Preload("Client.User").Find(&invoices).Error
 	if err != nil {
 		return u.Message(false, err.Error())
 	}
