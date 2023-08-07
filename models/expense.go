@@ -82,6 +82,23 @@ func (expense *Expense) Store() map[string]interface{} {
 	return res
 }
 
+// Show function returns specific entry by ID
+func (expense *Expense) Show(id uint) map[string]interface{} {
+	err := db.Where("id = ?", id).First(&expense).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return u.Message(false, "Record not found")
+	}
+
+	res := u.Message(true, "")
+	res["data"] = expense
+
+	return res
+}
+
 // Update function updates specific entry by ID
 func (expense *Expense) Update(id uint) map[string]interface{} {
 	_, err := expense.exists(id)

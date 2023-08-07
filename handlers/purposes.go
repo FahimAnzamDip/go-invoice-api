@@ -30,6 +30,20 @@ func StorePurposeHandler(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, res)
 }
 
+func ShowPurposeHandler(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	ID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		u.Respond(w, u.Message(false, "Error while parsing ID"))
+		return
+	}
+
+	purpose := &models.Purpose{}
+
+	res := purpose.Show(uint(ID))
+	u.Respond(w, res)
+}
+
 func UpdatePurposeHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)

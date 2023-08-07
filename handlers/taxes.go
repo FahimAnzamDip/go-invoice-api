@@ -17,6 +17,20 @@ func IndexTaxHandler(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, data)
 }
 
+func ShowTaxHandler(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	ID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		u.Respond(w, u.Message(false, "Error while parsing ID"))
+		return
+	}
+
+	tax := &models.Tax{}
+
+	res := tax.Show(uint(ID))
+	u.Respond(w, res)
+}
+
 func StoreTaxHandler(w http.ResponseWriter, r *http.Request) {
 	tax := &models.Tax{}
 

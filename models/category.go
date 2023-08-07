@@ -55,6 +55,23 @@ func (category *Category) Store() map[string]interface{} {
 	return res
 }
 
+// Show function returns specific entry by ID
+func (category *Category) Show(id uint) map[string]interface{} {
+	err := db.Where("id = ?", id).First(&category).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return u.Message(false, "Record not found")
+	}
+
+	res := u.Message(true, "")
+	res["data"] = category
+
+	return res
+}
+
 // Update function updates specific entry by ID
 func (category *Category) Update(id uint) map[string]interface{} {
 	_, err := category.exists(id)

@@ -55,6 +55,23 @@ func (purpose *Purpose) Store() map[string]interface{} {
 	return res
 }
 
+// Show function returns specific entry by ID
+func (purpose *Purpose) Show(id uint) map[string]interface{} {
+	err := db.Where("id = ?", id).First(&purpose).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return u.Message(false, "Record not found")
+	}
+
+	res := u.Message(true, "")
+	res["data"] = purpose
+
+	return res
+}
+
 // Update function updates specific entry by ID
 func (purpose *Purpose) Update(id uint) map[string]interface{} {
 	_, err := purpose.exists(id)

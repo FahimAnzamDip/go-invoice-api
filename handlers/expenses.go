@@ -30,6 +30,20 @@ func StoreExpenseHandler(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, res)
 }
 
+func ShowExpenseHandler(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	ID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		u.Respond(w, u.Message(false, "Error while parsing ID"))
+		return
+	}
+
+	expense := &models.Expense{}
+
+	res := expense.Show(uint(ID))
+	u.Respond(w, res)
+}
+
 func UpdateExpenseHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)

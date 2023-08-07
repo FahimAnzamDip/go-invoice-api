@@ -55,6 +55,23 @@ func (tag *Tag) Store() map[string]interface{} {
 	return res
 }
 
+// Show function returns specific entry by ID
+func (tag *Tag) Show(id uint) map[string]interface{} {
+	err := db.Where("id = ?", id).First(&tag).Error
+	if err != nil {
+		return u.Message(false, err.Error())
+	}
+
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return u.Message(false, "Record not found")
+	}
+
+	res := u.Message(true, "")
+	res["data"] = tag
+
+	return res
+}
+
 // Update function updates specific entry by ID
 func (tag *Tag) Update(id uint) map[string]interface{} {
 	_, err := tag.exists(id)

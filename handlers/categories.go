@@ -30,6 +30,20 @@ func StoreCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, res)
 }
 
+func ShowCategoryHandler(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	ID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		u.Respond(w, u.Message(false, "Error while parsing ID"))
+		return
+	}
+
+	category := &models.Category{}
+
+	data := category.Show(uint(ID))
+	u.Respond(w, data)
+}
+
 func UpdateCategoryHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)

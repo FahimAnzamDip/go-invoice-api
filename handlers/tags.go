@@ -30,6 +30,20 @@ func StoreTagHandler(w http.ResponseWriter, r *http.Request) {
 	u.Respond(w, res)
 }
 
+func ShowTagHanlder(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	ID, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		u.Respond(w, u.Message(false, "Error while parsing ID"))
+		return
+	}
+
+	tag := &models.Tag{}
+
+	res := tag.Show(uint(ID))
+	u.Respond(w, res)
+}
+
 func UpdateTagHandler(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	ID, err := strconv.ParseUint(id, 10, 32)
